@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razon Engenharia | Eficiência Energética e Termografia</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        razon: {
+                            dark: '#1A2E46', // Azul escuro texturizado
+                            copper: '#B87333', // Cobre do Z
+                            light: '#F8F9FA' // Fundo clean
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-razon-light text-slate-800 font-sans antialiased">
+
+    <header class="fixed w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" class="flex items-center">
+                <img src="assets/logo_no_background.png" alt="Razon Engenharia" class="h-12 w-auto">
+            </a>
+            <nav class="hidden md:flex space-x-8 font-semibold text-razon-dark">
+                <a href="#servicos" class="nav-link">Serviços</a>
+                <a href="#sobre" class="nav-link">Sobre</a>
+                <a href="#contato" class="bg-razon-copper text-white px-6 py-2.5 rounded-full hover:bg-razon-dark transition duration-300">Solicitar Orçamento</a>
+            </nav>
+            <button class="md:hidden text-razon-dark text-2xl" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <section class="hero-gradient h-screen flex items-center pt-24 border-b-4 border-razon-copper/20">
+        <div class="container mx-auto px-6 grid md:grid-cols-5 gap-12 items-center">
+            <div class="md:col-span-3 text-center md:text-left text-white">
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight">
+                    Engenharia de Precisão. <br>
+                    <span class="text-razon-copper">Resultados</span> Reais.
+                </h1>
+                <p class="text-xl text-slate-300 mb-12 max-w-2xl mx-auto md:mx-0">
+                    Soluções especializadas em <span class="text-white font-semibold">Eficiência Energética</span> e <span class="text-white font-semibold">Termografia</span> para a indústria e o varejo em Araçatuba e região.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-5 justify-center md:justify-start">
+                    <a href="#servicos" class="bg-white text-razon-dark px-10 py-4 rounded-xl font-bold text-center transition hover:scale-105 shadow-xl">Conheça nossos Serviços</a>
+                    <a href="#contato" class="border-2 border-white/40 hover:bg-white/10 px-10 py-4 rounded-xl font-bold text-center transition">Falar com o Engenheiro</a>
+                </div>
+            </div>
+            <div class="hidden md:flex md:col-span-2 justify-center items-center relative">
+                <img src="assets/painel_termo.png" alt="Ícone Razon" class="w-80 h-auto opacity-30 floating-icon">
+                <div class="absolute inset-0 bg-razon-dark/60 blur-3xl"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="servicos" class="py-28 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20 max-w-2xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-bold text-razon-dark tracking-tight">Especialidades Técnicas</h2>
+                <p class="text-lg text-slate-600 mt-5">Focamos em diagnósticos de alta precisão que garantem economia e continuidade operacional.</p>
+                <div class="w-24 h-2 bg-razon-copper mx-auto mt-6 rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="service-card group">
+                    <div class="card-icon">
+                        <i class="fas fa-bolt-lightning"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-5 text-razon-dark">Análise de Eficiência Energética</h3>
+                    <p class="text-slate-600 leading-relaxed mb-8">
+                        Diagnóstico completo para identificar desperdícios, fugas e baixo fator de potência. Otimizamos sua demanda contratada e propomos adequações tarifárias para redução imediata na conta.
+                    </p>
+                    <div class="flex items-center gap-3 text-sm font-medium text-razon-copper">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Redução de Custo Comprovada</span>
+                    </div>
+                </div>
+
+                <div class="service-card group">
+                    <div class="card-icon">
+                        <i class="fas fa-temperature-arrow-up"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-5 text-razon-dark">Laudos e Perícias Termográficas</h3>
+                    <p class="text-slate-600 leading-relaxed mb-8">
+                        Inspeção preditiva sem interrupção de carga. Identificamos pontos quentes em painéis e conexões, prevenindo falhas catastróficas, sobrecargas e riscos de incêndio.
+                    </p>
+                    <div class="flex items-center gap-3 text-sm font-medium text-razon-copper">
+                        <i class="fas fa-shield-virus"></i>
+                        <span>Segurança Ativa do Patrimônio</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="sobre" class="py-24 bg-razon-dark text-white relative overflow-hidden">
+        <img src="assets/icone-z.jpg" alt="" class="absolute -right-20 -bottom-20 w-96 h-auto opacity-10 rotate-12">
+        
+        <div class="container mx-auto px-6 grid md:grid-cols-5 gap-12 items-center relative z-10">
+            <div class="md:col-span-3">
+                <span class="text-razon-copper uppercase tracking-widest font-semibold text-sm">A Razon Engenharia</span>
+                <h2 class="text-4xl font-bold mt-3 mb-8tracking-tight">Rigor Técnico e Visão de Negócio</h2>
+                <p class="text-slate-300 mb-10 leading-relaxed text-lg">
+                    Liderada pelo Engenheiro Eletricista Fernando Freire, a Razon nasce para preencher a lacuna entre a engenharia pura e a necessidade de resultados financeiros das empresas. Entregamos laudos e análises que não apenas cumprem normas, mas viabilizam decisões estratégicas e economia real.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-6">
+                    <div class="flex items-center space-x-4 bg-slate-800 p-5 rounded-xl border border-white/10">
+                        <div class="text-razon-copper text-2xl"><i class="fas fa-certificate"></i></div>
+                        <div>
+                            <span class="font-bold block">CREA-SP</span>
+                            <span class="text-sm text-slate-400">Profissional Registrado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="md:col-span-2 bg-slate-800 p-10 rounded-3xl border border-white/10 shadow-2xl">
+                <p class="text-slate-200 italic mb-8 leading-relaxed">"O logo da Razon reflete nosso compromisso: o azul da solidez da engenharia unido ao cobre da condutividade elétrica. O Z é o ponto de conexão onde a energia flui com eficiência e segurança. Esse é o nosso trabalho."</p>
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-razon-copper rounded-full flex items-center justify-center text-xl font-bold">FF</div>
+                    <div>
+                        <p class="font-bold text-lg">Fernando Freire</p>
+                        <p class="text-sm text-razon-copper uppercase tracking-widest mt-1">Engenheiro Titular</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contato" class="py-24 bg-white">
+    <div class="container mx-auto px-6 text-center">
+        <div class="max-w-3xl mx-auto bg-slate-50 border border-slate-100 p-12 rounded-[3rem] shadow-sm">
+            <h2 class="text-3xl md:text-4xl font-bold text-razon-dark tracking-tight">Vamos Otimizar sua Empresa?</h2>
+            <p class="text-lg text-slate-600 mt-4 mb-10">
+                Solicite um orçamento ou uma conversa técnica sem compromisso. <br class="hidden md:block"> Atendimento rápido e direto com o engenheiro.
+            </p>
+            
+            <div class="flex justify-center">
+                <a href="https://wa.me/5518991234567?text=Olá, gostaria de um orçamento da Razon." 
+                   target="_blank" 
+                   class="flex items-center gap-3 bg-[#25D366] text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:bg-[#128C7E] hover:-translate-y-1 hover:shadow-lg active:scale-95 group">
+                    <i class="fab fa-whatsapp text-2xl group-hover:rotate-12 transition-transform"></i>
+                    <span>Falar no WhatsApp agora</span>
+                </a>
+            </div>
+            
+            <div class="mt-8 pt-8 border-t border-slate-200">
+                <p class="text-sm text-slate-500">
+                    Preferência por e-mail? 
+                    <a href="mailto:contato@razonengenharia.com.br" class="text-razon-copper font-semibold hover:underline">
+                        contato@razonengenharia.com.br
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <footer class="bg-white py-12 border-t border-slate-100">
+        <div class="container mx-auto px-6 text-center">
+            <img src="assets/logo-icone-esticado.png" alt="" class="h-10 w-auto mx-auto mb-6 opacity-40">
+            <p class="font-bold text-razon-dark text-lg mb-2">Razon Engenharia LTDA</p>
+            <p class="text-slate-500 text-sm">Araçatuba, SP | 2026</p>
+            <p class="text-xs text-slate-400 mt-2">razonengenharia.com.br</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

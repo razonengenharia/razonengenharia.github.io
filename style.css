@@ -1,0 +1,74 @@
+/* style.css - Customizações Razon Engenharia */
+
+/* Gradiente Técnico para o Hero: Azul Escuro com Cobre Sutil */
+.hero-gradient {
+    background: 
+        radial-gradient(circle at center, rgba(184, 115, 51, 0.1) 0%, rgba(26, 46, 70, 0) 70%),
+        linear-gradient(135deg, rgba(26, 46, 70, 0.95) 0%, rgba(15, 23, 42, 1) 100%);
+}
+
+/* Links do Menu com Efeito Cobre */
+.nav-link {
+    position: relative;
+    transition: color 0.3s;
+}
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: #B87333; /* Cobre */
+    transition: width 0.3s;
+}
+.nav-link:hover {
+    color: #B87333;
+}
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Estilo Premium dos Cards de Serviço */
+.service-card {
+    padding: 3rem;
+    border-radius: 2rem;
+    background-color: #F8F9FA;
+    border: 1px solid #E9ECEF;
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px -12px rgba(26, 46, 70, 0.15);
+    border-color: #B87333; /* Cobre ao hover */
+}
+
+/* Ícones dos Cards */
+.card-icon {
+    width: 4rem;
+    height: 4rem;
+    background-color: rgba(184, 115, 51, 0.1); /* Fundo cobre sutil */
+    color: #B87333;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s;
+}
+.service-card:hover .card-icon {
+    background-color: #B87333;
+    color: white;
+}
+
+/* Animação Flutuante para o Ícone Z no Hero */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+.floating-icon {
+    animation: float 5s ease-in-out infinite;
+}
