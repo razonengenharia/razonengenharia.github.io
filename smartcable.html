@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCable | Razon Engenharia</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="assets/logo-icone-esticado.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        razon: { dark: '#1A2E46', copper: '#B87333', light: '#F8F9FA' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Remove as setinhas (spinners) dos campos de número */
+        .no-spinners::-webkit-outer-spin-button,
+        .no-spinners::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .no-spinners {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <header class="fixed w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center relative">
+            <a href="index.html" class="flex items-center">
+                <img src="assets/logo_no_background.png" alt="Razon Engenharia" class="h-12 w-auto">
+            </a>
+
+            <nav id="nav-menu"
+                class="hidden md:flex md:flex-row md:relative md:top-auto md:left-auto md:w-auto md:bg-transparent md:p-0 md:shadow-none md:space-x-8 space-y-4 md:space-y-0 flex-col absolute top-full left-0 w-full bg-white p-6 shadow-lg font-semibold text-razon-dark">
+                <a href="index.html#servicos" class="nav-link block md:inline">Serviços</a>
+                <a href="ferramentas.html" class="nav-link block md:inline text-razon-copper">Ferramentas</a>
+                <a href="index.html#sobre" class="nav-link block md:inline">Sobre</a>
+                <a href="index.html#contato"
+                    class="bg-razon-copper text-white px-6 py-2.5 rounded-full hover:bg-razon-dark transition duration-300 inline-block text-center">Solicitar
+                    Orçamento</a>
+            </nav>
+
+            <button class="md:hidden text-razon-dark text-2xl" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow pt-32 pb-24">
+        <div class="container mx-auto px-6 max-w-6xl">
+
+            <div class="flex items-center gap-4 mb-10">
+                <div
+                    class="bg-razon-dark text-white w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-razon-dark tracking-tight">SmartCable</h1>
+                    <p class="text-slate-500 font-medium">Dimensionamento Avançado de Condutores (NBR 5410)</p>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8">
+
+                <div class="lg:col-span-7 bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                    <form id="smartcable-form" class="space-y-8">
+
+                        <div>
+                            <label class="block text-sm font-bold text-razon-dark uppercase tracking-wider mb-3">1. O
+                                que deseja calcular?</label>
+                            <select id="calc_target"
+                                class="w-full bg-slate-50 border border-slate-300 text-slate-700 text-lg rounded-xl focus:ring-razon-copper focus:border-razon-copper block p-3 transition">
+                                <option value="S">Seção Mínima do Condutor (S)</option>
+                                <option value="dU">Queda de Tensão (ΔU%)</option>
+                                <option value="L">Comprimento Máximo (L)</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Sistema</label>
+                                <select id="sys_type"
+                                    class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3" onchange="atualizarTensoes()">
+                                    <option value="mono">Monofásico</option>
+                                    <option value="bi">Bifásico</option>
+                                    <option value="tri">Trifásico</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tensão Nominal
+                                    (V)</label>
+                                <select id="v_nom" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3">
+                                    </select>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-100 pt-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Potência (W)</label>
+                                    <input type="number" id="pot" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 no-spinners" placeholder="Ex: 5500" max="200000">
+                                    <p class="text-[10px] text-slate-400 mt-1 pl-1">Limite máximo: 200 kW (200.000 W)</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Perfil do Equipamento</label>
+                                    <select id="carga_perfil" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3" onchange="atualizarTipCarga()">
+                                        </select>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3 items-start">
+                                <i class="fas fa-lightbulb text-razon-copper mt-0.5 text-lg"></i>
+                                <div>
+                                    <p id="tip_equipamentos" class="text-sm text-slate-700 font-medium leading-relaxed">Equipamentos sugeridos...</p>
+                                    <p class="text-xs text-slate-500 font-mono mt-1 font-bold">
+                                        Valores Automáticos: <span class="text-razon-dark" id="tip_valores">FP: 1.00 | fh: 1.00</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 border-t border-slate-100 pt-6 bg-slate-50 p-4 rounded-2xl">
+
+                            <div id="group_L">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Comprimento
+                                    (m)</label>
+                                <input type="number" id="len"
+                                    class="w-full bg-white border border-slate-300 rounded-xl p-3 no-spinners"
+                                    placeholder="Ex: 35" max="1000">
+                                <p class="text-[10px] text-slate-400 mt-1 pl-1">Limite máximo: 1000 m (1 km)</p>
+                            </div>
+
+                            <div id="group_dU">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">ΔU% Máx
+                                    Permitido</label>
+                                <input type="number" step="0.1" id="du_max"
+                                    class="w-full bg-white border border-slate-300 rounded-xl p-3 no-spinners"
+                                    value="4.0" max="4.0">
+                                <p class="text-[10px] text-slate-400 mt-1 pl-1">Limite NBR 5410: 4%</p>
+                            </div>
+
+                            <div id="group_S" class="hidden">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Cabo Instalado
+                                    (mm²)</label>
+                                <select id="cabo_inst"
+                                    class="w-full bg-white border border-slate-300 rounded-xl p-3">
+                                    </select>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="calcular()"
+                            class="w-full bg-razon-dark hover:bg-razon-copper text-white font-bold text-lg py-4 rounded-xl transition duration-300 shadow-md">
+                            Executar Cálculo
+                        </button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-5">
+                    <div class="bg-razon-dark text-white p-8 rounded-3xl shadow-xl sticky top-32">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold tracking-widest uppercase text-razon-copper">Relatório Técnico
+                            </h2>
+                            <i class="fas fa-file-invoice text-2xl opacity-50"></i>
+                        </div>
+
+                        <div id="result_display" class="hidden space-y-6">
+
+                            <div class="bg-slate-800/50 border border-white/10 rounded-2xl p-6 text-center">
+                                <p id="res_title"
+                                    class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-2">Seção
+                                    Recomendada</p>
+                                <p id="res_main_val" class="text-5xl font-bold text-white mb-1">--</p>
+                                <p id="res_main_unit" class="text-razon-copper font-medium">mm²</p>
+                            </div>
+
+                            <div class="bg-slate-800/50 border border-white/10 rounded-2xl p-5">
+                                <p
+                                    class="text-xs text-slate-400 uppercase tracking-wider mb-3 font-bold border-b border-white/10 pb-2">
+                                    Detalhes do Cabo Comercial</p>
+                                <div class="space-y-2 text-sm text-slate-300">
+                                    <p class="flex justify-between"><span>Aplicação Típica:</span> <strong id="res_app"
+                                            class="text-white text-right">--</strong></p>
+                                    <p class="flex justify-between"><span>Ø Condutor:</span> <strong id="res_d"
+                                            class="text-white">-- mm</strong></p>
+                                    <p class="flex justify-between"><span>Ø Externo (PVC):</span> <strong id="res_ext"
+                                            class="text-white">-- mm</strong></p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-1 text-sm border-t border-white/10 pt-4 text-slate-400">
+                                <p class="flex justify-between"><span>Corrente de Projeto (Ib):</span> <strong
+                                        id="res_ib" class="text-white">-- A</strong></p>
+                                <p class="flex justify-between"><span>Corrente Corrigida (I):</span> <strong id="res_i"
+                                        class="text-white">-- A</strong></p>
+                                <p class="flex justify-between"><span>Valor Calculado Exato:</span> <strong
+                                        id="res_exact" class="text-white">--</strong></p>
+                            </div>
+
+                            <div id="alert_box"
+                                class="mt-4 p-4 rounded-xl flex items-start gap-3 font-semibold text-sm hidden">
+                                <i id="alert_icon" class="fas mt-0.5"></i>
+                                <p id="alert_text"></p>
+                            </div>
+
+                        </div>
+
+                        <div id="empty_state" class="text-center py-16 opacity-50">
+                            <i class="fas fa-calculator text-6xl mb-4"></i>
+                            <p>Preencha os dados e execute<br>o cálculo para gerar o relatório.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white py-12 border-t border-slate-100 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <img src="assets/logo-icone-esticado.png" alt="" class="h-10 w-auto mx-auto mb-6 opacity-40">
+            <p class="font-bold text-razon-dark text-lg mb-2">Razon Engenharia</p>
+            <p class="text-slate-500 text-sm">Araçatuba, SP | 2026</p>
+            <p class="text-xs text-slate-400 mt-2">razonengenharia.com.br</p>
+        </div>
+    </footer>
+
+    <script src="smartcable.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
