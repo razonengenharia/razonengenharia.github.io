@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferramentas | Razon Engenharia</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="assets/logo-icone-esticado.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        razon: {
+                            dark: '#1A2E46',
+                            copper: '#B87333',
+                            light: '#F8F9FA'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-razon-light text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Header Idêntico ao Principal -->
+    <header class="fixed w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center relative">
+            <a href="index.html" class="flex items-center">
+                <img src="assets/logo_no_background.png" alt="Razon Engenharia" class="h-12 w-auto">
+            </a>
+            
+            <nav id="nav-menu" class="hidden md:flex md:flex-row md:relative md:top-auto md:left-auto md:w-auto md:bg-transparent md:p-0 md:shadow-none md:space-x-8 space-y-4 md:space-y-0 flex-col absolute top-full left-0 w-full bg-white p-6 shadow-lg font-semibold text-razon-dark">
+                <a href="index.html#servicos" class="nav-link block md:inline">Serviços</a>
+                <a href="ferramentas.html" class="nav-link block md:inline text-razon-copper">Ferramentas</a>
+                <a href="index.html#sobre" class="nav-link block md:inline">Sobre</a>
+                <a href="index.html#contato" class="bg-razon-copper text-white px-6 py-2.5 rounded-full hover:bg-razon-dark transition duration-300 inline-block text-center">Solicitar Orçamento</a>
+            </nav>
+            
+            <button class="md:hidden text-razon-dark text-2xl" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal da Página de Ferramentas -->
+    <main class="flex-grow pt-36 pb-24">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 max-w-2xl mx-auto">
+                <h1 class="text-4xl md:text-5xl font-bold text-razon-dark tracking-tight">Ferramentas de Engenharia</h1>
+                <p class="text-lg text-slate-600 mt-5">Aplicações e softwares exclusivos desenvolvidos para otimizar cálculos e dimensionamentos técnicos.</p>
+                <div class="w-24 h-2 bg-razon-copper mx-auto mt-6 rounded-full"></div>
+            </div>
+
+            <!-- Grid pronto para receber mais ferramentas no futuro -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto justify-center">
+                
+                <!-- Card Médio SmartCable -->
+                <a href="data:text/html;charset=utf-8,<!DOCTYPE html><html lang='pt-br'><head><meta charset='UTF-8'><title>SmartCable</title><style>body{font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;background:%23F8F9FA;color:%231A2E46;}</style></head><body><h1>Você entrou na SmartCable</h1></body></html>" target="_blank" class="group bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl transition duration-500 text-center flex flex-col items-center justify-between h-full">
+                    <div>
+                        <div class="text-razon-copper text-xs uppercase tracking-widest font-bold mb-2">Módulo Ativo</div>
+                        <h3 class="text-2xl font-bold mb-6 text-razon-dark">SmartCable</h3>
+                    </div>
+                    
+                    <!-- Imagem simplificada de condutores elétricos no centro -->
+                    <div class="w-full h-40 flex items-center justify-center bg-slate-50 rounded-2xl mb-6 relative overflow-hidden border border-slate-100/60">
+                        <svg class="w-24 h-24 text-slate-300 group-hover:text-razon-copper transition duration-500" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 32 C 40 32, 60 42, 90 42" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                            <path d="M10 50 C 40 50, 60 50, 90 50" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                            <path d="M10 68 C 40 58, 60 68, 90 68" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                            <rect x="25" y="22" width="10" height="56" rx="2" fill="#1A2E46" class="opacity-10 group-hover:opacity-20 transition"/>
+                            <rect x="60" y="22" width="10" height="56" rx="2" fill="#B87333" class="opacity-10 group-hover:opacity-30 transition"/>
+                        </svg>
+                    </div>
+                    
+                    <p class="text-slate-600 leading-relaxed mb-6 text-sm">
+                        Dimensionamento automatizado de condutores elétricos por capacidade de condução de corrente e queda de tensão em conformidade com as normas vigentes.
+                    </p>
+                    
+                    <span class="inline-flex items-center gap-2 bg-razon-dark text-white group-hover:bg-razon-copper px-6 py-2.5 rounded-full font-semibold transition duration-300 text-sm">
+                        Acessar Ferramenta <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                    </span>
+                </a>
+
+                <!-- Espaço reservado para futuras ferramentas se adaptarem ao grid automaticamente -->
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Idêntico ao Principal -->
+    <footer class="bg-white py-12 border-t border-slate-100 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <img src="assets/logo-icone-esticado.png" alt="" class="h-10 w-auto mx-auto mb-6 opacity-40">
+            <p class="font-bold text-razon-dark text-lg mb-2">Razon Engenharia</p>
+            <p class="text-slate-500 text-sm">Araçatuba, SP | 2026</p>
+            <p class="text-xs text-slate-400 mt-2">razonengenharia.com.br</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
