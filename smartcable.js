@@ -15,6 +15,42 @@ const cabosComerciais = [
     { s: 50.0, d: 8.80, ext: 13.40, app: "Alimentação industrial / QTA" }
 ];
 
+// Regras de Tensão por Sistema
+const vnomOptionsMono = [
+    { val: 127, text: "127 V" },
+    { val: 220, text: "220 V" }
+];
+
+const vnomOptionsBiTri = [
+    { val: 220, text: "220 V" },
+    { val: 380, text: "380 V" }
+];
+
+// Fatores de Harmônica
+const fhOptionsMonoBi = [
+    { val: 1, text: "1,00 - Fornos, chuveiros, resistores" },
+    { val: 1.15, text: "1,15 - Mix leve de escritório" },
+    { val: 1.19, text: "1,19 - Escritórios padrão (PCs)" },
+    { val: 1.23, text: "1,23 - Estações de trabalho" },
+    { val: 1.27, text: "1,27 - Servidores e Telecom" },
+    { val: 1.30, text: "1,30 - TI crítica e No-breaks (UPS)" },
+    { val: 1.34, text: "1,34 - Data Centers de média densidade" },
+    { val: 1.38, text: "1,38 - Storages e Processamento" },
+    { val: 1.41, text: "1,41 (√2) - Data Center Alta Dens. / Padrão Seguro" }
+];
+
+const fhOptionsTri = [
+    { val: 1, text: "1,00 - Fornos, chuveiros, resistores" },
+    { val: 1.15, text: "1,15 - Mix leve de escritório" },
+    { val: 1.19, text: "1,19 - Escritórios padrão (PCs)" },
+    { val: 1.24, text: "1,24 - Estações de trabalho" },
+    { val: 1.35, text: "1,35 - Servidores e Telecom" },
+    { val: 1.45, text: "1,45 - TI crítica e No-breaks (UPS)" },
+    { val: 1.55, text: "1,55 - Data Centers de média densidade" },
+    { val: 1.64, text: "1,64 - Storages e Processamento" },
+    { val: 1.73, text: "1,73 (√3) - Data Center Alta Dens. / Padrão Seguro" }
+];
+
 document.addEventListener('DOMContentLoaded', () => {
     // Popula o select de cabos
     const selectCabo = document.getElementById('cabo_inst');
@@ -25,9 +61,48 @@ document.addEventListener('DOMContentLoaded', () => {
         selectCabo.appendChild(opt);
     });
 
-    // Listener para alterar visibilidade dos campos
+    // Inicializa campos dependentes
+    atualizarDependenciasSistema();
+
+    // Listeners
+    document.getElementById('sys_type').addEventListener('change', atualizarDependenciasSistema);
     document.getElementById('calc_target').addEventListener('change', atualizarVisibilidade);
 });
+
+function atualizarDependenciasSistema() {
+    const sysType = document.getElementById('sys_type').value;
+    const vNomSelect = document.getElementById('v_nom');
+    const fhSelect = document.getElementById('fh');
+    
+    // Salva tensão atual para tentar manter a seleção se possível (ex: mudando de Mono pra Bi mantendo 220v)
+    const currentVnom = vNomSelect.value;
+    
+    vNomSelect.innerHTML = '';
+    fhSelect.innerHTML = '';
+
+    // Atualiza Tensão Nominal
+    let vOptions = (sysType === 'mono') ? vnomOptionsMono : vnomOptionsBiTri;
+    vOptions.forEach(opt => {
+        let el = document.createElement('option');
+        el.value = opt.val;
+        el.textContent = opt.text;
+        vNomSelect.appendChild(el);
+    });
+    
+    // Restaura seleção anterior se existir nas novas opções
+    if (Array.from(vNomSelect.options).some(opt => opt.value == currentVnom)) {
+        vNomSelect.value = currentVnom;
+    }
+
+    // Atualiza Fator de Harmônica (fh)
+    let fOptions = (sysType === 'tri') ? fhOptionsTri : fhOptionsMonoBi;
+    fOptions.forEach(opt => {
+        let el = document.createElement('option');
+        el.value = opt.val;
+        el.textContent = opt.text;
+        fhSelect.appendChild(el);
+    });
+}
 
 function atualizarVisibilidade() {
     const target = document.getElementById('calc_target').value;
@@ -49,6 +124,11 @@ function atualizarVisibilidade() {
     }
 }
 
+function toggleModal(modalID){
+    document.getElementById(modalID).classList.toggle("hidden");
+    document.getElementById(modalID).classList.toggle("flex");
+}
+
 function calcular() {
     // 1. Coleta e Validação Base
     const target = document.getElementById('calc_target').value;
@@ -57,9 +137,24 @@ function calcular() {
     const p = parseFloat(document.getElementById('pot').value);
     const fp = parseFloat(document.getElementById('fp').value) || 1;
     const fh = parseFloat(document.getElementById('fh').value) || 1;
+    const dUmax = parseFloat(document.getElementById('du_max').value);
+    const L = parseFloat(document.getElementById('len').value);
 
-    if (!p) {
-        alert("Por favor, preencha a Potência (W) da carga.");
+    // Validações de Limite
+    if (!p || p < 1 || p > 200000) {
+        alert("Por favor, preencha a Potência (W). O valor deve estar entre 1 e 200000 W.");
+        return;
+    }
+    if (fp < 0.1 || fp > 1) {
+        alert("O Fator de Potência (FP) deve estar entre 0.1 e 1.");
+        return;
+    }
+    if ((target === 'S' || target === 'dU') && (!L || L < 0.1 || L > 1000)) {
+        alert("Por favor, preencha o Comprimento (m). O valor deve estar entre 0.1 e 1000 m.");
+        return;
+    }
+    if ((target === 'S' || target === 'L') && (dUmax > 4 || dUmax <= 0)) {
+        alert("A queda de tensão máxima permitida (ΔU%) deve ser no máximo 4% e maior que 0.");
         return;
     }
 
@@ -85,10 +180,6 @@ function calcular() {
 
     // 4. Executa o cálculo com base no target
     if (target === 'S') {
-        const L = parseFloat(document.getElementById('len').value);
-        const dUmax = parseFloat(document.getElementById('du_max').value);
-        if (!L) return alert("Insira o comprimento.");
-
         const s_calc = (kv * rho * L * i * 100) / (dUmax * vnom);
         
         // Acha o cabo comercial imediatamente superior
@@ -99,9 +190,7 @@ function calcular() {
         configurarAlerta(alertBox, alertIcon, alertText, "success", `Com o cabo de ${caboIdeal.s}mm², a queda será garantida abaixo de ${dUmax}%.`);
 
     } else if (target === 'dU') {
-        const L = parseFloat(document.getElementById('len').value);
         const S_instalado = parseFloat(document.getElementById('cabo_inst').value);
-        if (!L) return alert("Insira o comprimento.");
 
         const dU_calc = (kv * rho * L * i * 100) / (S_instalado * vnom);
         const caboInfo = cabosComerciais.find(c => c.s == S_instalado);
@@ -115,7 +204,6 @@ function calcular() {
         }
 
     } else if (target === 'L') {
-        const dUmax = parseFloat(document.getElementById('du_max').value);
         const S_instalado = parseFloat(document.getElementById('cabo_inst').value);
         
         const l_calc = (dUmax * S_instalado * vnom) / (kv * rho * i * 100);
