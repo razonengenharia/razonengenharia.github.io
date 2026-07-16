@@ -70,104 +70,109 @@
         </div>
     </section>
 
+    <!-- SEÇÃO DE SERVIÇOS REESTRUTURADA -->
     <section id="servicos" class="py-28 bg-white">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-20 max-w-2xl mx-auto">
+            
+            <!-- Cabeçalho da Seção -->
+            <div class="text-center mb-16 max-w-2xl mx-auto">
                 <h2 class="text-4xl md:text-5xl font-bold text-razon-dark tracking-tight">Especialidades Técnicas</h2>
-                <p class="text-lg text-slate-600 mt-5">Diagnósticos de alta precisão que garantem economia e continuidade operacional para o seu negócio.</p>
+                <p class="text-lg text-slate-600 mt-5">Soluções de alta engenharia focadas em segurança, inovação e continuidade operacional para o seu negócio.</p>
                 <div class="w-24 h-2 bg-razon-copper mx-auto mt-6 rounded-full"></div>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- NÍVEL 1: PILARES DE OURO (Core Business) -->
+            <div class="grid md:grid-cols-3 gap-8 mb-24">
                 
-                <div class="service-card group p-8 bg-slate-50 rounded-3xl border border-slate-100 hover:shadow-2xl transition duration-500 flex flex-col h-full">
-                    <div class="card-icon text-razon-copper text-4xl mb-6">
+                <!-- Projetos BIM -->
+                <div class="service-card group p-8 bg-slate-50 rounded-3xl border-2 border-transparent hover:border-razon-copper hover:shadow-2xl transition duration-500 flex flex-col h-full relative overflow-hidden">
+                    <div class="card-icon text-razon-copper text-4xl mb-6 relative z-10">
                         <i class="fas fa-cubes"></i>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4 text-razon-dark">Projetos Elétricos (BIM/Revit)</h3>
-                    <p class="text-slate-600 leading-relaxed mb-6">
-                        Projetos residenciais e industriais desenvolvidos em **Revit MEP**. Compatibilização total entre disciplinas e detalhamento 3D que reduz erros e desperdícios na obra.
+                    <h3 class="text-2xl font-bold mb-4 text-razon-dark relative z-10">Projetos Elétricos (BIM/Revit)</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6 relative z-10">
+                        Projetos elétricos industriais, comerciais e residenciais de alto padrão desenvolvidos nativamente em **Revit (BIM)**. Compatibilização total entre disciplinas e detalhamento 3D que elimina desperdícios e erros de execução no canteiro de obras.
                     </p>
-                    <img src="assets/Revit.png" class="w-full h-32 object-cover rounded-xl mt-auto opacity-50 group-hover:opacity-100 transition">
-                </div>
-
-                <div class="service-card group p-8 bg-slate-50 rounded-3xl border border-slate-100 hover:shadow-2xl transition duration-500 flex flex-col h-full">
-                    <div class="card-icon text-razon-copper text-4xl mb-6">
-                        <i class="fas fa-wave-square"></i>
+                    <div class="mt-auto relative z-10">
+                        <img src="assets/Revit.png" class="w-full h-40 object-cover rounded-xl opacity-70 group-hover:opacity-100 transition duration-500 shadow-sm">
                     </div>
-                    <h3 class="text-2xl font-bold mb-4 text-razon-dark">Qualidade de Energia</h3>
-                    <p class="text-slate-600 leading-relaxed mb-6">
-                        Análise profunda de harmônicas, afundamentos de tensão e transientes. Identificamos fatores que causam queima de equipamentos e instabilidade no sistema.
-                    </p>
-                    <img src="assets/tensao.png" class="w-full h-32 object-cover rounded-xl mt-auto opacity-50 group-hover:opacity-100 transition">
                 </div>
 
-                <div class="service-card group p-8 bg-slate-50 rounded-3xl border border-slate-100 hover:shadow-2xl transition duration-500 flex flex-col h-full">
-                    <div class="card-icon text-razon-copper text-4xl mb-6">
-                        <i class="fas fa-gauge-high"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 text-razon-dark">Correção de Fator de Potência</h3>
-                    <p class="text-slate-600 leading-relaxed mb-6">
-                        Elimine as **multas por energia reativa excedente**. Dimensionamos e projetaram bancos de capacitores para otimizar o uso da energia e reduzir sua fatura mensal.
-                    </p>
-                    <img src="assets/cap.png" class="w-full h-32 object-cover rounded-xl mt-auto opacity-50 group-hover:opacity-100 transition">
-                </div>
-
-                <div class="service-card group p-8 bg-slate-50 rounded-3xl border border-slate-100 hover:shadow-2xl transition duration-500 flex flex-col h-full">
-                    <div class="card-icon text-razon-copper text-4xl mb-6">
+                <!-- SPDA e Proteção -->
+                <div class="service-card group p-8 bg-slate-50 rounded-3xl border-2 border-transparent hover:border-razon-copper hover:shadow-2xl transition duration-500 flex flex-col h-full relative overflow-hidden">
+                    <div class="card-icon text-razon-copper text-4xl mb-6 relative z-10">
                         <i class="fas fa-bolt-lightning"></i>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4 text-razon-dark">Análise de Eficiência</h3>
-                    <p class="text-slate-600 leading-relaxed mb-6">
-                        Diagnóstico para identificar fugas e desperdícios. Proposta de adequações tarifárias e técnicas para redução imediata nos custos operacionais.
+                    <h3 class="text-2xl font-bold mb-4 text-razon-dark relative z-10">Sistemas de Proteção (SPDA)</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6 relative z-10">
+                        Estudos e projetos completos de SPDA e medidas de proteção contra surtos (MPS). Proteção absoluta para estruturas complexas, equipamentos sensíveis e pessoas, desenvolvidos sob o rigor técnico exigido pela **NBR 5419-2026**.
                     </p>
-                    <img src="assets/efici.png" class="w-full h-32 object-cover rounded-xl mt-auto opacity-50 group-hover:opacity-100 transition">
+                    <div class="mt-auto relative z-10">
+                        <img src="assets/pda.png" class="w-full h-40 object-cover rounded-xl opacity-70 group-hover:opacity-100 transition duration-500 shadow-sm">
+                    </div>
                 </div>
 
-                <div class="service-card group p-8 bg-slate-50 rounded-3xl border border-slate-100 hover:shadow-2xl transition duration-500 flex flex-col h-full">
-                    <div class="card-icon text-razon-copper text-4xl mb-6">
-                        <i class="fas fa-crosshairs"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 text-razon-dark">Perícias Termográficas</h3>
-                    <p class="text-slate-600 leading-relaxed mb-6">
-                        Inspeção preditiva para identificar pontos quentes sem interrupção de carga. Prevenção absoluta contra falhas catastróficas e riscos de incêndio.
-                    </p>
-                    <img src="assets/painel_termo.png" class="w-full h-32 object-cover rounded-xl mt-auto opacity-50 group-hover:opacity-100 transition">
-                </div>
-
-                <div class="service-card group p-8 bg-slate-50 rounded-3xl border border-slate-100 hover:shadow-2xl transition duration-500 flex flex-col h-full">
-                    <div class="card-icon text-razon-copper text-4xl mb-6">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 text-razon-dark">Projetos Luminotécnicos (DIALux)</h3>
-                    <p class="text-slate-600 leading-relaxed mb-6">
-                        Simulação técnica para ambientes industriais e comerciais. Garantimos o cumprimento normativo, aliando conforto visual, segurança ocupacional e economia de energia.
-                    </p>
-                    <img src="assets/lumino.png" class="w-full h-32 object-cover rounded-xl mt-auto opacity-50 group-hover:opacity-100 transition">
-                </div>
-
-                <div class="service-card group p-8 bg-slate-50 rounded-3xl border border-slate-100 hover:shadow-2xl transition duration-500 flex flex-col h-full">
-                    <div class="card-icon text-razon-copper text-4xl mb-6">
-                        <i class="fas fa-bolt-lightning"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 text-razon-dark">Estudo e projetos de PDA</h3>
-                    <p class="text-slate-600 leading-relaxed mb-6">
-                        Dimensionamento e projetos de Sistemas de Proteção contra Descargas Atmosféricas (SPDA e MPS). Segurança para estruturas, equipamentos e pessoas, em total conformidade com a NBR 5419-2026.
-                    </p>
-                    <img src="assets/pda.png" class="w-full h-32 object-cover rounded-xl mt-auto opacity-50 group-hover:opacity-100 transition">
-                </div>
-                <div class="service-card group p-8 bg-slate-50 rounded-3xl border border-slate-100 hover:shadow-2xl transition duration-500 flex flex-col h-full">
-                    <div class="card-icon text-razon-copper text-4xl mb-6">
+                <!-- Fotovoltaico Off-Grid -->
+                <div class="service-card group p-8 bg-slate-50 rounded-3xl border-2 border-transparent hover:border-razon-copper hover:shadow-2xl transition duration-500 flex flex-col h-full relative overflow-hidden">
+                    <div class="card-icon text-razon-copper text-4xl mb-6 relative z-10">
                         <i class="fas fa-sun"></i>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4 text-razon-dark">Projeto e Manutenção Fotovoltaica</h3>
-                    <p class="text-slate-600 leading-relaxed mb-6">
-                        Dimensionamento técnico, aprovação junto à concessionária e plano de manutenção preventiva e corretiva para sistemas solares. Maximize a geração de energia e garanta o retorno do seu investimento.
+                    <h3 class="text-2xl font-bold mb-4 text-razon-dark relative z-10">Sistemas Solares Off-Grid</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6 relative z-10">
+                        Dimensionamento técnico e projetos de engenharia para sistemas solares isolados (**Off-Grid**) e híbridos com armazenamento em baterias. Soluções robustas para autonomia energética, agronegócio e locais sem acesso à concessionária.
                     </p>
-                    <img src="assets/solar.png" class="w-full h-32 object-cover rounded-xl mt-auto opacity-50 group-hover:opacity-100 transition">
+                    <div class="mt-auto relative z-10">
+                        <img src="assets/solar.png" class="w-full h-40 object-cover rounded-xl opacity-70 group-hover:opacity-100 transition duration-500 shadow-sm">
+                    </div>
                 </div>
 
             </div>
+
+            <!-- NÍVEL 2: ENGENHARIA DE DIAGNÓSTICO (Serviços Secundários) -->
+            <div class="bg-slate-50 p-10 md:p-14 rounded-[3rem] border border-slate-200">
+                <div class="text-center mb-12">
+                    <h3 class="text-2xl md:text-3xl font-bold text-razon-dark tracking-tight">Engenharia de Diagnóstico e Eficiência</h3>
+                    <p class="text-slate-500 mt-3 text-lg">Serviços técnicos de análise para redução imediata de custos e prevenção de falhas.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    
+                    <!-- Fator de Potência + Qualidade -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition group">
+                        <div class="text-razon-copper text-3xl mb-5 opacity-80 group-hover:scale-110 group-hover:opacity-100 origin-left transition">
+                            <i class="fas fa-wave-square"></i>
+                        </div>
+                        <h4 class="font-bold text-razon-dark text-xl mb-3">Qualidade de Energia & Fator de Potência</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Análise de harmônicas, transientes e eliminação definitiva de multas por energia reativa excedente. Projetamos e especificamos bancos de capacitores para otimizar o consumo da sua empresa.
+                        </p>
+                    </div>
+
+                    <!-- Termografia + Eficiência -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition group">
+                        <div class="text-razon-copper text-3xl mb-5 opacity-80 group-hover:scale-110 group-hover:opacity-100 origin-left transition">
+                            <i class="fas fa-temperature-high"></i>
+                        </div>
+                        <h4 class="font-bold text-razon-dark text-xl mb-3">Termografia & Manutenção Preditiva</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Inspeções preditivas com termografia infravermelha para identificação de anomalias térmicas sem interrupção de carga. Diagnóstico preciso para prevenção de falhas catastróficas e paradas não programadas.
+                        </p>
+                    </div>
+
+                    <!-- Luminotécnico -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition group">
+                        <div class="text-razon-copper text-3xl mb-5 opacity-80 group-hover:scale-110 group-hover:opacity-100 origin-left transition">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h4 class="font-bold text-razon-dark text-xl mb-3">Projetos Luminotécnicos (DIALux)</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Modelagem e simulação luminotécnica técnica para indústrias e comércios. Garantia de conforto visual, atendimento aos requisitos de ergonomia do trabalho e redução do consumo de iluminação.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </section>
 
