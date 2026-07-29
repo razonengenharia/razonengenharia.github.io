@@ -764,15 +764,18 @@ function calcularRiscos() {
     atualizarPainel('r4', R4_total, RT_R4);
 
     // Atualiza interpretação de % no card R4
-    const r4Pct    = document.getElementById('r4-percentual');
-    const r4PctVal = document.getElementById('r4-pct-valor');
+    const r4Pct         = document.getElementById('r4-percentual');
+    const r4PctVal      = document.getElementById('r4-pct-valor');
+    const r4Placeholder = document.getElementById('r4-percentual-placeholder');
     if (r4Pct && r4PctVal) {
         if (R4_total > 0) {
             const pct = (R4_total * 100).toLocaleString('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
-            r4PctVal.textContent = `${pct}%`;
+            r4PctVal.textContent = `${pct}% ao ano`;
             r4Pct.classList.remove('hidden');
+            if (r4Placeholder) r4Placeholder.classList.add('hidden');
         } else {
             r4Pct.classList.add('hidden');
+            if (r4Placeholder) r4Placeholder.classList.remove('hidden');
         }
     }
 

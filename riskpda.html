@@ -259,19 +259,20 @@
                             <div id="r4-bar" class="h-full rounded-full transition-all duration-500 bg-emerald-500" style="width:0%"></div>
                         </div>
 
-                        <!-- Interpretação dinâmica -->
-                        <p id="r4-percentual" class="text-[11px] text-slate-500 leading-snug hidden">
-                            Isso significa uma perda anual esperada de <b id="r4-pct-valor" class="text-razon-dark"></b> do patrimônio total — por incêndio e falha de sistemas causados por raios.<br>
-                            <span class="text-[10px] text-slate-400 italic">Limite tolerável: 0,1% ao ano (RT = 10⁻³). Acima disso, a proteção é financeiramente vantajosa.</span>
-                        </p>
+                        <!-- Explicação estática + percentual dinâmico -->
+                        <div class="text-[11px] text-slate-500 leading-relaxed space-y-1">
+                            <p>O R4 mede quanto do patrimônio total pode ser perdido por ano — considerando incêndios e falhas de sistemas causados por descargas atmosféricas.</p>
+                            <p id="r4-percentual" class="hidden">Com os dados inseridos, <b id="r4-pct-valor" class="text-razon-dark text-[12px]"></b> do patrimônio está em risco por ano. O limite tolerável pela norma é <b class="text-slate-600">0,1% (10⁻³)</b> — acima disso, investir em proteção é financeiramente vantajoso.</p>
+                            <p id="r4-percentual-placeholder" class="text-slate-400 italic">Preencha os dados das zonas para ver o resultado aqui.</p>
+                        </div>
 
                         <!-- Simulador em R$ -->
                         <div class="border-t border-slate-100 pt-3">
-                            <p class="text-[10px] text-slate-500 font-semibold mb-2">Simule a perda em reais:</p>
+                            <p class="text-[10px] text-slate-500 font-semibold mb-2">Qual é o valor do seu patrimônio?</p>
                             <div class="flex items-center gap-2">
-                                <span class="text-[11px] text-slate-500 shrink-0">R$</span>
+                                <span class="text-[11px] text-slate-500 shrink-0 font-medium">R$</span>
                                 <input type="number" id="r4-patrimonio" min="100" max="1000000000" step="1000"
-                                    placeholder="Valor do patrimônio"
+                                    placeholder="Ex: 2.000.000"
                                     class="flex-1 p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-emerald-400"
                                     oninput="calcularPerdaR4()">
                             </div>
