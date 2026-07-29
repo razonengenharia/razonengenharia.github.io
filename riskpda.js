@@ -12,6 +12,7 @@ let AnaliseRisco = {
 };
 let TABELAS_A = {};
 let TABELAS_B = {};
+let TABELAS_C = {};
 let LISTA_NG = [];
 let NgAtual = 0;
 
@@ -20,12 +21,14 @@ async function carregarDados() {
     try {
         const resA = await fetch('./data/tabelas_anexo_a.json');
         const resB = await fetch('./data/tabelas_anexo_b.json');
+        const resC = await fetch('./data/tabelas_anexo_c.json');
         const resNg = await fetch('./data/municipios_ng.json');
 
-        if (!resA.ok || !resB.ok || !resNg.ok) throw new Error("Erro ao buscar arquivos JSON. Verifique as pastas.");
+        if (!resA.ok || !resB.ok || !resC.ok || !resNg.ok) throw new Error("Erro ao buscar arquivos JSON. Verifique as pastas.");
 
         TABELAS_A = await resA.json();
         TABELAS_B = await resB.json();
+        TABELAS_C = await resC.json();
         LISTA_NG = await resNg.json();
 
         popularFiltrosGlobais();
@@ -210,15 +213,21 @@ const TIPS_B = {
     pli: "Tabela B.9 – Probabilidade de falha de sistemas internos por surto induzido devido a impacto próximo à linha (fonte S4)."
 };
 
-// Textos de ajuda (Anexo C - ainda não calculado, apenas coleta de dados)
+// Textos de ajuda (Anexo C — NBR 5419-2:2026)
 const TIPS_C = {
-    nz: "Número de pessoas que ocupam esta zona. Usado no Anexo C (Perda de Vida Humana) — cálculo ainda não implementado.",
-    nt: "Número total de pessoas na edificação. Usado no Anexo C — cálculo ainda não implementado.",
-    tz: "Tempo de permanência das pessoas nesta zona, em horas/ano (máx. 8760). Usado no Anexo C — cálculo ainda não implementado.",
-    rt: "Fator de redução conforme o tipo de piso/revestimento da zona (ex: asfalto, brita, mármore). Tabela do Anexo C — aguardando normativa.",
-    rf: "Fator de redução dependente do risco de incêndio/explosão da zona. Tabela do Anexo C — aguardando normativa.",
-    rp: "Fator de redução pelas providências de combate a incêndio (extintores, hidrantes). Tabela do Anexo C — aguardando normativa.",
-    hz: "Fator de agravamento por perigo especial (dificuldade de evacuação ou pânico). Tabela do Anexo C — aguardando normativa."
+    nz: "Número de pessoas que ocupam esta zona (nz). Tabela C.1, Eq. C.1. Se a estrutura for uma zona única, nz/nt = 1.",
+    nt: "Número total de pessoas na edificação (nt). Tabela C.1, Eq. C.1. Deve ser ≥ nz.",
+    tz: "Horas de permanência das pessoas nesta zona por ano (máx. 8760). Tabela C.1, Eq. C.1.",
+    rs: "Tabela C.7 — Fator de aumento conforme tipo de estrutura: madeira/alvenaria simples (rs=2) ou estrutura metálica/concreto armado (rs=1).",
+    rt: "Tabela C.3 — Fator de redução pelo tipo de superfície do piso/solo da zona. Pisos isolantes (asfalto, madeira) reduzem fortemente o risco de choque.",
+    rp: "Tabela C.4 — Fator de redução pelas providências de combate a incêndio da zona. Instalações automáticas têm fator menor (melhor proteção).",
+    rf: "Tabela C.5 — Fator de redução em função do risco de incêndio ou explosão da zona. Zona sem risco tem rf=0.",
+    hz: "Tabela C.6 — Fator de aumento pelo perigo especial de pânico ou dificuldade de evacuação. Sem perigo especial, hz=1.",
+    lf_r1: "Tabela C.2 — Valor médio típico de LF (fração de vítimas por danos físicos/incêndio — D2) para cálculo do R1 (Vidas Humanas). LT é fixo em 0,01 para D1.",
+    lo_r1: "Tabela C.2 — Valor médio típico de LO (fração de vítimas por falha de sistemas — D3) para cálculo do R1. Usado quando falha de sistema coloca vidas em risco (hospital, explosão).",
+    lf_r4: "Tabela D.2 — Valor médio típico de LF (danos físicos/incêndio — D2) para cálculo do R4 (Risco Econômico). Simplificado com ca/ct = 1.",
+    lo_r4: "Tabela D.2 — Valor médio típico de LO (falha de sistemas — D3) para cálculo do R4. Usado nos componentes RC, RM, RW, RZ do R4.",
+    roteamento: "NBR 5419-2 item 6.4.5 — Com mesmo roteamento, calcule apenas a pior linha (geralmente sinal — menor Uw, maior CT). Com roteamentos diferentes, some as contribuições de cada linha."
 };
 
 // Formata probabilidades: usa notação científica quando o valor é muito pequeno
@@ -269,6 +278,17 @@ function adicionarZona() {
     const optPLI_si = TABELAS_B.tabela_B9_PLI.sinal.map(item =>
         `<option value="${item.valor}" ${String(item.uw) === UW_SI ? 'selected' : ''}>UN = ${item.uw} kV → PLI = ${item.valor}</option>`
     ).join('');
+
+    // Opções Anexo C (carregadas de tabelas_anexo_c.json)
+    const optRS   = TABELAS_C.tabela_C7_rs.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
+    const optRT   = TABELAS_C.tabela_C3_rt.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
+    const optRP   = TABELAS_C.tabela_C4_rp.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
+    const optRF   = TABELAS_C.tabela_C5_rf.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
+    const optHZ   = TABELAS_C.tabela_C6_hz.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
+    const optLF_C2 = TABELAS_C.tabela_C2_LF.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
+    const optLO_C2 = TABELAS_C.tabela_C2_LO.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
+    const optLF_D2 = TABELAS_C.tabela_D2_LF.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
+    const optLO_D2 = TABELAS_C.tabela_D2_LO.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
 
     div.innerHTML = `
         <div class="bg-slate-100 rounded-t-2xl px-6 py-4 border-b border-slate-200 flex justify-between items-center">
@@ -346,28 +366,55 @@ function adicionarZona() {
                     `<select id="pli-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLI_si}</select>`)}
             </div>
 
-            <!-- Anexo C: Perdas (em branco por enquanto) -->
-            <div class="space-y-4 border-l pl-4 border-slate-100 bg-slate-50 rounded-r-xl p-3">
-                <h3 class="font-bold text-razon-copper border-b border-slate-200 pb-1 text-sm"><i class="fas fa-fire-extinguisher mr-1"></i>Fatores de Perda (Anexo C)</h3>
+            <!-- Anexo C: Fatores de Perda (ativo) -->
+            <div class="space-y-3 border-l pl-4 border-amber-200 bg-amber-50/40 rounded-r-xl p-3">
+                <h3 class="font-bold text-amber-700 border-b border-amber-200 pb-1 text-sm"><i class="fas fa-chart-bar text-amber-600 mr-1"></i>Perdas e Riscos (Anexo C)</h3>
 
                 <div class="grid grid-cols-2 gap-2">
                     ${campoTip('Pes. Zona (nz)', TIPS_C.nz,
-                        `<input type="number" id="nz-${id}" value="10" min="1" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="calcularRiscos()">`)}
+                        `<input type="number" id="nz-${id}" value="10" min="1" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
                     ${campoTip('Pes. Total (nt)', TIPS_C.nt,
-                        `<input type="number" id="nt-${id}" value="50" min="1" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="calcularRiscos()">`)}
+                        `<input type="number" id="nt-${id}" value="10" min="1" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
                 </div>
 
-                ${campoTip('Tempo (tz) horas/ano', TIPS_C.tz,
-                    `<input type="number" id="tz-${id}" value="8760" min="1" max="8760" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="calcularRiscos()">`)}
+                ${campoTip('Tempo tz (h/ano)', TIPS_C.tz,
+                    `<input type="number" id="tz-${id}" value="8760" min="1" max="8760" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
 
-                <div class="mt-2 pt-2 border-t border-slate-200">
-                    <p class="text-[9px] text-slate-500 italic mb-1">Aguardando tabelas normativas (cálculo ainda não ativo):</p>
+                ${campoTip('Estrutura (rs, Tab. C.7)', TIPS_C.rs,
+                    `<select id="rs-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRS}</select>`)}
+
+                <div class="border-t border-amber-200/80 pt-2">
+                    <p class="text-[9px] text-amber-700 font-semibold uppercase mb-1.5 tracking-wide">Fatores da Zona</p>
+                    ${campoTip('Piso/Solo (rt, Tab. C.3)', TIPS_C.rt,
+                        `<select id="rt-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRT}</select>`)}
+                    ${campoTip('Contra fogo (rp, Tab. C.4)', TIPS_C.rp,
+                        `<select id="rp-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRP}</select>`)}
+                    ${campoTip('Risco incêndio (rf, Tab. C.5)', TIPS_C.rf,
+                        `<select id="rf-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRF}</select>`)}
+                    ${campoTip('Perigo especial (hz, Tab. C.6)', TIPS_C.hz,
+                        `<select id="hz-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optHZ}</select>`)}
+                </div>
+
+                <div class="border-t border-amber-200/80 pt-2">
+                    <p class="text-[9px] text-amber-700 font-semibold uppercase mb-1.5 tracking-wide">Valores de Perda</p>
                     <div class="grid grid-cols-2 gap-2">
-                        ${campoTip('rt', TIPS_C.rt, `<input type="number" id="rt-${id}" placeholder="—" class="w-full p-1.5 border rounded text-[10px] bg-slate-100 text-slate-400" disabled>`, 'text-slate-400')}
-                        ${campoTip('rf', TIPS_C.rf, `<input type="number" id="rf-${id}" placeholder="—" class="w-full p-1.5 border rounded text-[10px] bg-slate-100 text-slate-400" disabled>`, 'text-slate-400')}
-                        ${campoTip('rp', TIPS_C.rp, `<input type="number" id="rp-${id}" placeholder="—" class="w-full p-1.5 border rounded text-[10px] bg-slate-100 text-slate-400" disabled>`, 'text-slate-400')}
-                        ${campoTip('hz', TIPS_C.hz, `<input type="number" id="hz-${id}" placeholder="—" class="w-full p-1.5 border rounded text-[10px] bg-slate-100 text-slate-400" disabled>`, 'text-slate-400')}
+                        ${campoTip('LF — R1 (Tab. C.2)', TIPS_C.lf_r1,
+                            `<select id="lf-r1-${id}" class="w-full p-1.5 bg-white border border-amber-200 rounded text-[10px]" onchange="calcularRiscos()">${optLF_C2}</select>`)}
+                        ${campoTip('LO — R1 (Tab. C.2)', TIPS_C.lo_r1,
+                            `<select id="lo-r1-${id}" class="w-full p-1.5 bg-white border border-amber-200 rounded text-[10px]" onchange="calcularRiscos()">${optLO_C2}</select>`)}
+                        ${campoTip('LF — R4 (Tab. D.2)', TIPS_C.lf_r4,
+                            `<select id="lf-r4-${id}" class="w-full p-1.5 bg-white border border-amber-200 rounded text-[10px]" onchange="calcularRiscos()">${optLF_D2}</select>`)}
+                        ${campoTip('LO — R4 (Tab. D.2)', TIPS_C.lo_r4,
+                            `<select id="lo-r4-${id}" class="w-full p-1.5 bg-white border border-amber-200 rounded text-[10px]" onchange="calcularRiscos()">${optLO_D2}</select>`)}
                     </div>
+                </div>
+
+                <div class="border-t border-amber-200/80 pt-2">
+                    ${campoTip('Roteamento das linhas', TIPS_C.roteamento,
+                        `<label class="flex items-center gap-2 cursor-pointer mt-1">
+                            <input type="checkbox" id="roteamento-${id}" class="accent-amber-600 w-4 h-4" onchange="calcularRiscos()">
+                            <span class="text-[10px] text-slate-700 leading-tight">Mesmo roteamento<br><span class="text-slate-400 text-[9px]">(usa apenas a pior linha)</span></span>
+                        </label>`)}
                 </div>
             </div>
         </div>
@@ -401,6 +448,42 @@ function adicionarZona() {
                         <div><p class="text-[9px] text-slate-400">PV</p><span id="out-pv-si-${id}" class="text-blue-300 font-bold">0.0000</span></div>
                         <div><p class="text-[9px] text-slate-400">PW</p><span id="out-pw-si-${id}" class="font-bold">0.0000</span></div>
                         <div><p class="text-[9px] text-slate-400">PZ</p><span id="out-pz-si-${id}" class="font-bold">0.0000</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultado Anexo C por Zona -->
+            <div class="mt-4 pt-3 border-t border-slate-700/60">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-[10px] uppercase tracking-wider text-slate-400"><i class="fas fa-fire text-amber-400 mr-1"></i>Perdas e Riscos (Anexo C) — esta zona</span>
+                    <span id="out-roteamento-${id}" class="text-[9px] italic text-slate-500">—</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mb-2 text-center">
+                    <div class="bg-slate-800/60 p-2 rounded-lg border border-slate-700/50">
+                        <p class="text-[9px] text-slate-400 mb-0.5">LA = LU</p>
+                        <span id="out-la-${id}" class="text-[11px] font-bold text-green-400">—</span>
+                    </div>
+                    <div class="bg-slate-800/60 p-2 rounded-lg border border-slate-700/50">
+                        <p class="text-[9px] text-slate-400 mb-0.5">LB = LV</p>
+                        <span id="out-lb-${id}" class="text-[11px] font-bold text-amber-400">—</span>
+                    </div>
+                    <div class="bg-slate-800/60 p-2 rounded-lg border border-slate-700/50">
+                        <p class="text-[9px] text-slate-400 mb-0.5">LC – LZ</p>
+                        <span id="out-lc-${id}" class="text-[11px] font-bold text-slate-300">—</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-amber-900/30 p-2.5 rounded-lg border border-amber-700/40">
+                        <p class="text-[9px] text-amber-400/80 font-semibold uppercase mb-0.5">R1 Zona</p>
+                        <span id="out-r1-zona-${id}" class="text-sm font-bold text-amber-300">—</span>
+                    </div>
+                    <div class="bg-sky-900/30 p-2.5 rounded-lg border border-sky-700/40">
+                        <p class="text-[9px] text-sky-400/80 font-semibold uppercase mb-0.5">F Zona</p>
+                        <span id="out-f-zona-${id}" class="text-sm font-bold text-sky-300">—</span>
+                    </div>
+                    <div class="bg-emerald-900/30 p-2.5 rounded-lg border border-emerald-700/40">
+                        <p class="text-[9px] text-emerald-400/80 font-semibold uppercase mb-0.5">R4 Zona</p>
+                        <span id="out-r4-zona-${id}" class="text-sm font-bold text-emerald-300">—</span>
                     </div>
                 </div>
             </div>
@@ -559,16 +642,122 @@ function calcularRiscos() {
         setVal(`out-pw-si-${id}`, formatProb(resSi.PW));
         setVal(`out-pz-si-${id}`, formatProb(resSi.PZ));
 
-        // Guarda os resultados no estado (útil para futura composição do R1 - Anexo C)
+        // Guarda os resultados do Anexo B no estado
         zona.anexoB_resultado = { PA, PB, PSPD, energia: resEn, sinal: resSi };
 
         // ---------------------------------------------------------
-        // 3. ANEXO C (PERDAS) — ainda em branco, apenas coleta dados
+        // 3. CÁLCULOS DO ANEXO C — Perdas e Riscos R1, F, R4
         // ---------------------------------------------------------
-        // Os campos nz, nt, tz já são coletados na interface para uso futuro.
-        // Os campos rt, rf, rp, hz permanecem desabilitados até a definição
-        // das tabelas normativas correspondentes.
+        const nz  = Math.max(parseFloat(document.getElementById(`nz-${id}`).value) || 1, 1);
+        const nt  = Math.max(parseFloat(document.getElementById(`nt-${id}`).value) || nz, nz);
+        const tz  = Math.min(parseFloat(document.getElementById(`tz-${id}`).value) || 8760, 8760);
+        const rs  = parseFloat(document.getElementById(`rs-${id}`).value)  || 1;
+        const rt  = parseFloat(document.getElementById(`rt-${id}`).value)  || 0.01;
+        const rp  = parseFloat(document.getElementById(`rp-${id}`).value)  || 1;
+        const rf  = parseFloat(document.getElementById(`rf-${id}`).value)  || 0.01;
+        const hz  = parseFloat(document.getElementById(`hz-${id}`).value)  || 1;
+        const LF_R1  = parseFloat(document.getElementById(`lf-r1-${id}`).value)  || 0.01;
+        const LO_R1  = parseFloat(document.getElementById(`lo-r1-${id}`).value)  || 0;
+        const LF_R4  = parseFloat(document.getElementById(`lf-r4-${id}`).value)  || 0.1;
+        const LO_R4v = parseFloat(document.getElementById(`lo-r4-${id}`).value)  || 0.01;
+        const mesmoRoteamento = document.getElementById(`roteamento-${id}`) ? document.getElementById(`roteamento-${id}`).checked : false;
+
+        const LT = 0.01;
+        const fatorPessoas = (nz / nt) * (tz / 8760);
+
+        // Perdas R1 — Tabela C.1 (Eq. C.1 a C.4)
+        const LA = rt * LT * fatorPessoas * rs;
+        const LU = LA;
+        const LB = rp * rf * hz * LF_R1 * fatorPessoas * rs;
+        const LV = LB;
+        const LC = LO_R1 * fatorPessoas * rs;
+
+        // Perdas R4 — Tabela D.1 simplificada (ca/ct = 1, sem fatorPessoas, sem hz, sem rs)
+        const LB_R4  = rp * rf * LF_R4;
+        const LO_R4l = LO_R4v;
+
+        // Helper: combina energia e sinal conforme roteamento
+        const combinar = (en, si) => mesmoRoteamento ? Math.max(en, si) : en + si;
+
+        const peb_en_val = parseFloat(document.getElementById(`peb-en-${id}`).value) || 1;
+        const peb_si_val = parseFloat(document.getElementById(`peb-si-${id}`).value) || 1;
+
+        // R1 — componentes (Tabela 6, NBR 5419-2)
+        const RA = Nd * PA * LA;
+        const RB = Nd * PB * LB;
+        const RC = combinar(Nd * resEn.PC * LC,   Nd * resSi.PC * LC);
+        const RM = combinar(Nm * resEn.PM * LC,   Nm * resSi.PM * LC);  // LM = LC (D3)
+        const RU = combinar((Nl_en + Ndj_en) * resEn.PU * LU,  (Nl_si + Ndj_si) * resSi.PU * LU);
+        const RV = combinar((Nl_en + Ndj_en) * resEn.PV * LV,  (Nl_si + Ndj_si) * resSi.PV * LV);
+        const RW = combinar((Nl_en + Ndj_en) * resEn.PW * LC,  (Nl_si + Ndj_si) * resSi.PW * LC);  // LW = LC
+        const RZ = combinar(Ni_en * resEn.PZ * LC,              Ni_si * resSi.PZ * LC);              // LZ = LC
+        const R1_zona = RA + RB + RC + RM + RU + RV + RW + RZ;
+
+        // F — frequência de dano a sistemas internos (Tabela 7, NBR 5419-2)
+        const FB = Nd * PB;
+        const FC = combinar(Nd * resEn.PC,   Nd * resSi.PC);
+        const FM = combinar(Nm * resEn.PM,   Nm * resSi.PM);
+        const FV = combinar((Nl_en + Ndj_en) * peb_en_val, (Nl_si + Ndj_si) * peb_si_val);
+        const FW = combinar((Nl_en + Ndj_en) * resEn.PW,  (Nl_si + Ndj_si) * resSi.PW);
+        const FZ = combinar(Ni_en * resEn.PZ,              Ni_si * resSi.PZ);
+        const F_zona = FB + FC + FM + FV + FW + FZ;
+
+        // R4 — risco econômico (Tabela 6, com perdas D.1/D.2 simplificadas)
+        const RB_R4 = Nd * PB * LB_R4;
+        const RC_R4 = combinar(Nd * resEn.PC * LO_R4l,  Nd * resSi.PC * LO_R4l);
+        const RM_R4 = combinar(Nm * resEn.PM * LO_R4l,  Nm * resSi.PM * LO_R4l);
+        const RV_R4 = combinar((Nl_en + Ndj_en) * resEn.PV * LB_R4,   (Nl_si + Ndj_si) * resSi.PV * LB_R4);
+        const RW_R4 = combinar((Nl_en + Ndj_en) * resEn.PW * LO_R4l,  (Nl_si + Ndj_si) * resSi.PW * LO_R4l);
+        const RZ_R4 = combinar(Ni_en * resEn.PZ * LO_R4l,              Ni_si * resSi.PZ * LO_R4l);
+        const R4_zona = RB_R4 + RC_R4 + RM_R4 + RV_R4 + RW_R4 + RZ_R4;
+
+        // Atualiza outputs do console por zona
+        setVal(`out-la-${id}`,           formatProb(LA));
+        setVal(`out-lb-${id}`,           formatProb(LB));
+        setVal(`out-lc-${id}`,           formatProb(LC));
+        setVal(`out-r1-zona-${id}`,      formatProb(R1_zona));
+        setVal(`out-f-zona-${id}`,       formatProb(F_zona));
+        setVal(`out-r4-zona-${id}`,      formatProb(R4_zona));
+        setVal(`out-roteamento-${id}`,   mesmoRoteamento ? 'Mesmo roteamento — pior linha' : 'Roteamentos diferentes — soma');
+
+        zona.anexoC_resultado = { R1: R1_zona, F: F_zona, R4: R4_zona };
     });
+
+    // ---------------------------------------------------------
+    // 4. TOTAIS GLOBAIS — R1, F, R4 (soma de todas as zonas)
+    // ---------------------------------------------------------
+    let R1_total = 0, F_total = 0, R4_total = 0;
+    AnaliseRisco.zonas.forEach(z => {
+        if (z.anexoC_resultado) {
+            R1_total += z.anexoC_resultado.R1;
+            F_total  += z.anexoC_resultado.F;
+            R4_total += z.anexoC_resultado.R4;
+        }
+    });
+
+    const RT_R1 = 1e-5, RT_F = 1, RT_R4 = 1e-3;
+
+    const atualizarPainel = (base, valor, toleravel) => {
+        const elVal    = document.getElementById(`${base}-valor`);
+        const elStatus = document.getElementById(`${base}-status`);
+        const elBar    = document.getElementById(`${base}-bar`);
+        if (!elVal) return;
+
+        const excede = valor > toleravel;
+        elVal.textContent = valor !== 0 ? valor.toExponential(2) : '0';
+        elStatus.textContent  = excede ? '⚠ EXCEDE RT — proteção necessária' : '✓ Dentro do limite tolerável';
+        elStatus.className    = excede
+            ? 'text-xs font-bold text-red-500 mt-1'
+            : 'text-xs font-bold text-emerald-600 mt-1';
+        if (elBar) {
+            elBar.style.width = `${Math.min((valor / toleravel) * 100, 100)}%`;
+            elBar.className = `h-full rounded-full transition-all duration-500 ${excede ? 'bg-red-500' : 'bg-emerald-500'}`;
+        }
+    };
+
+    atualizarPainel('r1', R1_total, RT_R1);
+    atualizarPainel('f',  F_total,  RT_F);
+    atualizarPainel('r4', R4_total, RT_R4);
 }
 
 document.addEventListener('DOMContentLoaded', carregarDados);
