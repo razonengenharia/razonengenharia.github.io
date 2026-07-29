@@ -1,0 +1,23 @@
+{
+  "tabela_A1_CD": [
+    { "id": "cd_025", "descricao": "Estrutura cercada por objetos significativamente mais altos", "valor": 0.25 },
+    { "id": "cd_050", "descricao": "Estrutura cercada por objetos da mesma altura ou ligeiramente mais baixos", "valor": 0.5 },
+    { "id": "cd_100", "descricao": "Estrutura isolada: nenhum outro objeto nas vizinhanças", "valor": 1.0 },
+    { "id": "cd_200", "descricao": "Estrutura isolada no topo de uma colina ou monte", "valor": 2.0 }
+  ],
+  "tabela_A2_CI": [
+    { "id": "aereo", "descricao": "Aéreo", "valor": 1.0 },
+    { "id": "enterrado", "descricao": "Enterrado", "valor": 0.5 },
+    { "id": "enterrado_malha", "descricao": "Trecho da linha elétrica enterrado e instalado ao longo do comprimento LL no interior dos limites de um eletrodo de aterramento em malha", "valor": 0.01 }
+  ],
+  "tabela_A3_CT": [
+    { "id": "bt_sinal", "descricao": "Linha elétrica de energia em BT ou sinal", "valor": 1.0 },
+    { "id": "at_trafo", "descricao": "Linha elétrica de energia em AT (com transformador AT/BT)", "valor": 0.2 }
+  ],
+  "tabela_A4_CE": [
+    { "id": "rural", "descricao": "Rural", "valor": 1.0 },
+    { "id": "suburbano", "descricao": "Suburbano", "valor": 0.5 },
+    { "id": "urbano", "descricao": "Urbano", "valor": 0.1 },
+    { "id": "urbano_alto", "descricao": "Urbano com estruturas acima de 20 m de altura", "valor": 0.01 }
+  ]
+}
