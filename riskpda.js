@@ -1,7 +1,14 @@
+// =============================================================
+// RiskPDA - Motor de Cálculo (NBR 5419-2:2026)
+// Anexo A: NÃO ALTERADO (mantido 100% igual à versão em produção)
+// Anexo B: reescrito e corrigido (energia + sinal funcionais)
+// Anexo C: estrutura de dados/UI preparada, cálculo ainda em branco
+// =============================================================
+
 // VARIÁVEIS GLOBAIS DE ESTADO
-let AnaliseRisco = { 
-    anexoA: {}, 
-    zonas: [] 
+let AnaliseRisco = {
+    anexoA: {},
+    zonas: []
 };
 let TABELAS_A = {};
 let TABELAS_B = {};
@@ -23,9 +30,9 @@ async function carregarDados() {
 
         popularFiltrosGlobais();
         configurarLimitesInputs();
-        
+
         // Inicia primeira zona
-        adicionarZona(); 
+        adicionarZona();
     } catch (erro) {
         console.error(erro);
         alert(`Erro de Inicialização:\n${erro.message}`);
@@ -36,10 +43,10 @@ async function carregarDados() {
 function popularFiltrosGlobais() {
     const estadoSelect = document.getElementById('estado-select');
     const municipioSelect = document.getElementById('municipio-select');
-    
+
     // Agrupa e Ordena UFs
     const ufs = [...new Set(LISTA_NG.map(item => item.uf))].sort();
-    
+
     estadoSelect.innerHTML = '<option value="">Selecione o Estado</option>';
     ufs.forEach(uf => {
         const opt = document.createElement('option');
@@ -51,14 +58,14 @@ function popularFiltrosGlobais() {
     estadoSelect.addEventListener('change', (e) => {
         const uf = e.target.value;
         municipioSelect.innerHTML = '<option value="">Selecione a Cidade</option>';
-        if (!uf) { 
-            municipioSelect.disabled = true; 
+        if (!uf) {
+            municipioSelect.disabled = true;
             NgAtual = 0;
             calcularRiscos();
-            return; 
+            return;
         }
 
-        const cidades = LISTA_NG.filter(item => item.uf === uf).sort((a,b) => a.municipio.localeCompare(b.municipio));
+        const cidades = LISTA_NG.filter(item => item.uf === uf).sort((a, b) => a.municipio.localeCompare(b.municipio));
         cidades.forEach(m => {
             const opt = document.createElement('option');
             opt.value = m.ng;
@@ -66,7 +73,7 @@ function popularFiltrosGlobais() {
             opt.textContent = m.municipio;
             municipioSelect.appendChild(opt);
         });
-        
+
         municipioSelect.disabled = false;
         NgAtual = 0;
         calcularRiscos();
@@ -76,7 +83,7 @@ function popularFiltrosGlobais() {
 
     const preencherSelect = (id, dados) => {
         const el = document.getElementById(id);
-        if(!el) return;
+        if (!el) return;
         el.innerHTML = '';
         dados.forEach(d => {
             const opt = document.createElement('option');
@@ -94,16 +101,16 @@ function popularFiltrosGlobais() {
     preencherSelect('linha-si-ci', TABELAS_A.tabela_A2_CI);
     preencherSelect('linha-si-ct', TABELAS_A.tabela_A3_CT);
     preencherSelect('linha-si-ce', TABELAS_A.tabela_A4_CE);
-    
-    if(document.getElementById('linha-si-ct').options.length > 0) document.getElementById('linha-si-ct').value = "1";
-    if(document.getElementById('linha-en-ct').options.length > 0) document.getElementById('linha-en-ct').value = "0.2";
+
+    if (document.getElementById('linha-si-ct').options.length > 0) document.getElementById('linha-si-ct').value = "1";
+    if (document.getElementById('linha-en-ct').options.length > 0) document.getElementById('linha-en-ct').value = "0.2";
 
     estadoSelect.value = "SP";
     estadoSelect.dispatchEvent(new Event('change'));
-    
+
     setTimeout(() => {
         const ara = Array.from(municipioSelect.options).find(o => o.dataset.nome === 'Araçatuba');
-        if(ara) {
+        if (ara) {
             municipioSelect.value = ara.value;
             calcularRiscos();
         }
@@ -125,7 +132,7 @@ function configurarLimitesInputs() {
 
     limites.forEach(lim => {
         const el = document.getElementById(lim.id);
-        if(!el) return;
+        if (!el) return;
         el.addEventListener('input', () => {
             let v = parseFloat(el.value);
             if (v > lim.max) { el.value = lim.max; calcularRiscos(); }
@@ -146,8 +153,8 @@ function toggleAdjacente() {
     const isAtivo = document.getElementById('toggle-adjacente').checked;
     const bloco = document.getElementById('bloco-adjacente');
     const inputs = bloco.querySelectorAll('input, select');
-    
-    if(isAtivo) {
+
+    if (isAtivo) {
         bloco.classList.remove('hidden');
         setTimeout(() => bloco.classList.remove('opacity-50'), 50);
         inputs.forEach(i => i.disabled = false);
@@ -161,19 +168,78 @@ function toggleAdjacente() {
     }
     calcularRiscos();
 }
+// ================= FIM DO BLOCO ANEXO A (NÃO ALTERADO) =================
+
+
+// =============================================================
+// UTILITÁRIOS DE INTERFACE - TOOLTIPS (Anexo B e C)
+// =============================================================
+
+// Gera um campo com rótulo + ícone de ajuda (tooltip) + controle (select/input)
+// Usa as classes .has-tooltip / .tooltip-box já definidas no <style> do riskpda.html
+function campoTip(label, tooltip, controlHtml, extraLabelClass = '') {
+    return `
+        <div>
+            <label class="text-[11px] font-semibold text-slate-700 mb-1 flex items-center gap-1 ${extraLabelClass}">
+                <span>${label}</span>
+                <span class="has-tooltip relative inline-flex cursor-help align-middle">
+                    <i class="fas fa-circle-info text-slate-400 hover:text-razon-copper text-[10px] transition"></i>
+                    <div class="tooltip-box absolute z-30 bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-razon-dark text-white text-[10px] leading-snug p-2.5 rounded-lg shadow-xl normal-case font-normal">
+                        ${tooltip}
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-razon-dark"></div>
+                    </div>
+                </span>
+            </label>
+            ${controlHtml}
+        </div>`;
+}
+
+// Textos de ajuda (Anexo B - NBR 5419-2:2026)
+const TIPS_B = {
+    pta: "Tabela B.1 – Medida adicional contra choque elétrico (tensão de passo/toque) nesta zona: isolação, avisos, malha de equipotencialização ou restrições físicas.",
+    pb: "Tabela B.2 – Probabilidade de falha do sistema de captação/descida (SPDA) conforme o nível de proteção que protege esta zona.",
+    pspd: "Tabela B.3 – Eficácia do sistema coordenado de DPS (Dispositivos de Proteção contra Surtos) instalado para proteger os equipamentos desta zona.",
+    wm1: "Largura da malha da blindagem espacial (telas/gaiola) desta zona, em metros. Usada no cálculo de KS1 (Eq. B.5). Deixe 0 se não houver blindagem espacial.",
+    wm2: "Largura da malha do SPDA (captores/descidas) que envolve esta zona, em metros. Usada no cálculo de KS2 (Eq. B.5). Deixe 0 se não houver.",
+    ks3: "Tabela B.5 – Característica da fiação interna da zona: tamanho dos laços induzidos formados pelo roteamento dos cabos (quanto maior o laço, maior o risco).",
+    ptu: "Tabela B.6 – Medida de proteção contra choque por tensão de passo/toque associada a esta linha.",
+    peb: "Tabela B.7 – Eficácia do DPS instalado na entrada desta linha (equipotencialização de serviço).",
+    cld: "Tabela B.4 – Fator de blindagem da linha (blindada ou não) e sua interligação ao barramento de equipotencialização. Afeta tanto o impacto direto (CLD) quanto a indução (CLI).",
+    uw: "Tensão suportável de impulso dos equipamentos alimentados por esta linha, em kV. Usada para calcular KS4 = 1 / Uw (Eq. B.7).",
+    pld: "Tabela B.8 – Probabilidade de falha de sistemas internos por surto conduzido devido a impacto direto na linha (fonte S3).",
+    pli: "Tabela B.9 – Probabilidade de falha de sistemas internos por surto induzido devido a impacto próximo à linha (fonte S4)."
+};
+
+// Textos de ajuda (Anexo C - ainda não calculado, apenas coleta de dados)
+const TIPS_C = {
+    nz: "Número de pessoas que ocupam esta zona. Usado no Anexo C (Perda de Vida Humana) — cálculo ainda não implementado.",
+    nt: "Número total de pessoas na edificação. Usado no Anexo C — cálculo ainda não implementado.",
+    tz: "Tempo de permanência das pessoas nesta zona, em horas/ano (máx. 8760). Usado no Anexo C — cálculo ainda não implementado.",
+    rt: "Fator de redução conforme o tipo de piso/revestimento da zona (ex: asfalto, brita, mármore). Tabela do Anexo C — aguardando normativa.",
+    rf: "Fator de redução dependente do risco de incêndio/explosão da zona. Tabela do Anexo C — aguardando normativa.",
+    rp: "Fator de redução pelas providências de combate a incêndio (extintores, hidrantes). Tabela do Anexo C — aguardando normativa.",
+    hz: "Fator de agravamento por perigo especial (dificuldade de evacuação ou pânico). Tabela do Anexo C — aguardando normativa."
+};
+
+// Formata probabilidades: usa notação científica quando o valor é muito pequeno
+function formatProb(v) {
+    if (!isFinite(v)) return '0.0000';
+    if (v !== 0 && Math.abs(v) < 0.0001) return v.toExponential(2);
+    return v.toFixed(4);
+}
 
 // FUNÇÃO 4: GERENCIADOR DE ZONAS (CRIAÇÃO INTELIGENTE)
 function adicionarZona() {
     if (AnaliseRisco.zonas.length >= 4) return;
-    
+
     const id = Date.now();
     const numero = AnaliseRisco.zonas.length + 1;
     AnaliseRisco.zonas.push({ id, numero, nome: `Zona de Estudo ${numero}` });
-    
+
     const container = document.getElementById('zonas-container');
     const div = document.createElement('div');
     div.id = `zona-card-${id}`;
-    div.className = "bg-white rounded-2xl shadow-sm border border-slate-300 overflow-hidden relative";
+    div.className = "bg-white rounded-2xl shadow-sm border border-slate-300 relative";
 
     const optPTA = TABELAS_B.tabela_B1_PTA.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
     const optPB = TABELAS_B.tabela_B2_PB.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
@@ -184,101 +250,160 @@ function adicionarZona() {
     const optPEB = TABELAS_B.tabela_B7_PEB.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
 
     div.innerHTML = `
-        <div class="bg-slate-100 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+        <div class="bg-slate-100 rounded-t-2xl px-6 py-4 border-b border-slate-200 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <span class="bg-razon-dark text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">${numero}</span>
                 <input type="text" id="nome-zona-${id}" value="Zona de Estudo ${numero}" class="font-bold text-lg text-razon-dark bg-transparent border-b border-dashed border-slate-400 focus:outline-none focus:border-razon-copper">
             </div>
             ${numero > 1 ? `<button onclick="removerZona(${id})" class="text-red-500 hover:text-red-700 text-sm font-bold bg-white px-3 py-1 rounded shadow-sm border border-red-200"><i class="fas fa-trash"></i> Excluir</button>` : ''}
         </div>
-        
+
         <div class="p-6 grid md:grid-cols-4 gap-6">
-            <!-- Anexo B: Estrutura -->
+            <!-- Anexo B: Estrutura / Zona -->
             <div class="space-y-4">
-                <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-shield-alt text-razon-copper mr-1"></i>Proteção Física</h3>
-                <div><label class="text-[11px] font-semibold text-slate-700">Contra choque (PTA)</label><select id="pta-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTA}</select></div>
-                <div><label class="text-[11px] font-semibold text-slate-700">Nível do SPDA (PB)</label><select id="pb-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPB}</select></div>
-                <div><label class="text-[11px] font-semibold text-slate-700">DPS Coord. (PSPD)</label><select id="pspd-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPSPD}</select></div>
+                <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-shield-alt text-razon-copper mr-1"></i>Proteção Física da Zona</h3>
+
+                ${campoTip('Contra choque (PTA)', TIPS_B.pta,
+                    `<select id="pta-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTA}</select>`)}
+
+                ${campoTip('Nível do SPDA (PB)', TIPS_B.pb,
+                    `<select id="pb-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPB}</select>`)}
+
+                ${campoTip('DPS Coordenado (PSPD)', TIPS_B.pspd,
+                    `<select id="pspd-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPSPD}</select>`)}
+
                 <div class="grid grid-cols-2 gap-2">
-                    <div><label class="text-[10px] font-semibold text-slate-700">Wm1 (m)</label><input type="number" id="wm1-${id}" value="0" min="0" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()"></div>
-                    <div><label class="text-[10px] font-semibold text-slate-700">Wm2 (m)</label><input type="number" id="wm2-${id}" value="0" min="0" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()"></div>
+                    ${campoTip('Wm1 (m)', TIPS_B.wm1,
+                        `<input type="number" id="wm1-${id}" value="0" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                    ${campoTip('Wm2 (m)', TIPS_B.wm2,
+                        `<input type="number" id="wm2-${id}" value="0" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
                 </div>
-                <div><label class="text-[11px] font-semibold text-slate-700">Fiação Int. (KS3)</label><select id="ks3-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optKS3}</select></div>
+
+                ${campoTip('Fiação Interna (KS3)', TIPS_B.ks3,
+                    `<select id="ks3-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optKS3}</select>`)}
             </div>
 
             <!-- Anexo B: Energia -->
             <div class="space-y-4 border-l pl-4 border-slate-100">
-                <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-bolt text-razon-copper mr-1"></i>Linha Energia</h3>
-                <div><label class="text-[11px] font-semibold text-slate-700">Medida choque (PTU)</label><select id="ptu-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTU}</select></div>
-                <div><label class="text-[11px] font-semibold text-slate-700">DPS Linha (PEB)</label><select id="peb-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPEB}</select></div>
-                <div><label class="text-[11px] font-semibold text-slate-700">Blindagem (CLD/CLI)</label><select id="cld-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select></div>
+                <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-bolt text-razon-copper mr-1"></i>Linha de Energia</h3>
+
+                ${campoTip('Medida choque (PTU)', TIPS_B.ptu,
+                    `<select id="ptu-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTU}</select>`)}
+
+                ${campoTip('DPS na linha (PEB)', TIPS_B.peb,
+                    `<select id="peb-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPEB}</select>`)}
+
+                ${campoTip('Blindagem (CLD/CLI)', TIPS_B.cld,
+                    `<select id="cld-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select>`)}
+
                 <div class="grid grid-cols-3 gap-1">
-                    <div><label class="text-[10px] font-bold text-slate-700">Uw(kV)</label><input type="number" id="uw-en-${id}" value="2.5" step="0.5" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()"></div>
-                    <div><label class="text-[10px] font-bold text-slate-700">PLD</label><input type="number" id="pld-en-${id}" value="1" step="0.1" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()"></div>
-                    <div><label class="text-[10px] font-bold text-slate-700">PLI</label><input type="number" id="pli-en-${id}" value="0.3" step="0.1" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()"></div>
+                    ${campoTip('Uw (kV)', TIPS_B.uw,
+                        `<input type="number" id="uw-en-${id}" value="2.5" step="0.5" min="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                    ${campoTip('PLD', TIPS_B.pld,
+                        `<input type="number" id="pld-en-${id}" value="1" step="0.1" min="0" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                    ${campoTip('PLI', TIPS_B.pli,
+                        `<input type="number" id="pli-en-${id}" value="0.3" step="0.1" min="0" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
                 </div>
             </div>
 
             <!-- Anexo B: Sinal -->
             <div class="space-y-4 border-l pl-4 border-slate-100">
-                <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-network-wired text-razon-copper mr-1"></i>Linha Sinal</h3>
-                <div><label class="text-[11px] font-semibold text-slate-700">Medida choque (PTU)</label><select id="ptu-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTU}</select></div>
-                <div><label class="text-[11px] font-semibold text-slate-700">DPS Linha (PEB)</label><select id="peb-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPEB}</select></div>
-                <div><label class="text-[11px] font-semibold text-slate-700">Blindagem (CLD/CLI)</label><select id="cld-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select></div>
+                <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-network-wired text-razon-copper mr-1"></i>Linha de Sinal</h3>
+
+                ${campoTip('Medida choque (PTU)', TIPS_B.ptu,
+                    `<select id="ptu-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTU}</select>`)}
+
+                ${campoTip('DPS na linha (PEB)', TIPS_B.peb,
+                    `<select id="peb-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPEB}</select>`)}
+
+                ${campoTip('Blindagem (CLD/CLI)', TIPS_B.cld,
+                    `<select id="cld-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select>`)}
+
                 <div class="grid grid-cols-3 gap-1">
-                    <div><label class="text-[10px] font-bold text-slate-700">Uw(kV)</label><input type="number" id="uw-si-${id}" value="1.5" step="0.5" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()"></div>
-                    <div><label class="text-[10px] font-bold text-slate-700">PLD</label><input type="number" id="pld-si-${id}" value="1" step="0.1" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()"></div>
-                    <div><label class="text-[10px] font-bold text-slate-700">PLI</label><input type="number" id="pli-si-${id}" value="0.5" step="0.1" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()"></div>
+                    ${campoTip('Uw (kV)', TIPS_B.uw,
+                        `<input type="number" id="uw-si-${id}" value="1.5" step="0.5" min="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                    ${campoTip('PLD', TIPS_B.pld,
+                        `<input type="number" id="pld-si-${id}" value="1" step="0.1" min="0" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                    ${campoTip('PLI', TIPS_B.pli,
+                        `<input type="number" id="pli-si-${id}" value="0.5" step="0.1" min="0" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
                 </div>
             </div>
 
-            <!-- Preparações Anexo C (Perdas) -->
+            <!-- Anexo C: Perdas (em branco por enquanto) -->
             <div class="space-y-4 border-l pl-4 border-slate-100 bg-slate-50 rounded-r-xl p-3">
-                <h3 class="font-bold text-razon-copper border-b border-slate-200 pb-1 text-sm"><i class="fas fa-fire-extinguisher mr-1"></i>Fatores Perda (Anx. C)</h3>
+                <h3 class="font-bold text-razon-copper border-b border-slate-200 pb-1 text-sm"><i class="fas fa-fire-extinguisher mr-1"></i>Fatores de Perda (Anexo C)</h3>
+
                 <div class="grid grid-cols-2 gap-2">
-                    <div><label class="text-[10px] font-semibold text-slate-700">Pes. Zona (nz)</label><input type="number" id="nz-${id}" value="10" min="1" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="calcularRiscos()"></div>
-                    <div><label class="text-[10px] font-semibold text-slate-700">Pes. Total (nt)</label><input type="number" id="nt-${id}" value="50" min="1" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="calcularRiscos()"></div>
+                    ${campoTip('Pes. Zona (nz)', TIPS_C.nz,
+                        `<input type="number" id="nz-${id}" value="10" min="1" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="calcularRiscos()">`)}
+                    ${campoTip('Pes. Total (nt)', TIPS_C.nt,
+                        `<input type="number" id="nt-${id}" value="50" min="1" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="calcularRiscos()">`)}
                 </div>
-                <div><label class="text-[10px] font-semibold text-slate-700">Tempo (tz) horas/ano</label><input type="number" id="tz-${id}" value="8760" min="1" max="8760" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="calcularRiscos()"></div>
-                
+
+                ${campoTip('Tempo (tz) horas/ano', TIPS_C.tz,
+                    `<input type="number" id="tz-${id}" value="8760" min="1" max="8760" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="calcularRiscos()">`)}
+
                 <div class="mt-2 pt-2 border-t border-slate-200">
-                    <p class="text-[9px] text-slate-500 italic mb-1">Aguardando tabelas normativas:</p>
-                    <div class="grid grid-cols-2 gap-1">
-                        <input type="number" id="rt-${id}" placeholder="rt" class="w-full p-1 border rounded text-[10px]" disabled title="Resistividade do Piso">
-                        <input type="number" id="rf-${id}" placeholder="rf" class="w-full p-1 border rounded text-[10px]" disabled title="Risco Incêndio">
-                        <input type="number" id="rp-${id}" placeholder="rp" class="w-full p-1 border rounded text-[10px]" disabled title="Medidas Incêndio">
-                        <input type="number" id="hz-${id}" placeholder="hz" class="w-full p-1 border rounded text-[10px]" disabled title="Perigo Especial">
+                    <p class="text-[9px] text-slate-500 italic mb-1">Aguardando tabelas normativas (cálculo ainda não ativo):</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        ${campoTip('rt', TIPS_C.rt, `<input type="number" id="rt-${id}" placeholder="—" class="w-full p-1.5 border rounded text-[10px] bg-slate-100 text-slate-400" disabled>`, 'text-slate-400')}
+                        ${campoTip('rf', TIPS_C.rf, `<input type="number" id="rf-${id}" placeholder="—" class="w-full p-1.5 border rounded text-[10px] bg-slate-100 text-slate-400" disabled>`, 'text-slate-400')}
+                        ${campoTip('rp', TIPS_C.rp, `<input type="number" id="rp-${id}" placeholder="—" class="w-full p-1.5 border rounded text-[10px] bg-slate-100 text-slate-400" disabled>`, 'text-slate-400')}
+                        ${campoTip('hz', TIPS_C.hz, `<input type="number" id="hz-${id}" placeholder="—" class="w-full p-1.5 border rounded text-[10px] bg-slate-100 text-slate-400" disabled>`, 'text-slate-400')}
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-razon-dark p-3 flex flex-wrap gap-4 text-white text-xs font-mono justify-around border-t border-slate-700">
-            <div>PA: <span id="out-pa-${id}" class="text-razon-copper font-bold">0.0000</span></div>
-            <div>PB: <span id="out-pb-${id}" class="text-razon-copper font-bold">0.0000</span></div>
-            <div>PC: <span id="out-pc-${id}" class="font-bold">0.0000</span></div>
-            <div>PM(En): <span id="out-pm-${id}" class="font-bold">0.0000</span></div>
-            <div class="border-l border-slate-600 pl-4">PU(En): <span id="out-pu-en-${id}" class="text-blue-300 font-bold">0.0000</span></div>
-            <div>PV(En): <span id="out-pv-en-${id}" class="text-blue-300 font-bold">0.0000</span></div>
-            <div>PW(En): <span id="out-pw-en-${id}" class="font-bold">0.0000</span></div>
-            <div>PZ(En): <span id="out-pz-en-${id}" class="font-bold">0.0000</span></div>
+        <div class="bg-razon-dark rounded-b-2xl p-4 text-white text-xs font-mono">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-700/60">
+                <span class="text-[10px] uppercase tracking-wider text-slate-400"><i class="fas fa-calculator text-razon-copper mr-1"></i>Probabilidades de Dano — Anexo B</span>
+                <div class="flex gap-4">
+                    <span>PA: <b id="out-pa-${id}" class="text-razon-copper">0.0000</b></span>
+                    <span>PB: <b id="out-pb-${id}">0.0000</b></span>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-[10px] text-amber-400/90 font-bold uppercase mb-1"><i class="fas fa-bolt mr-1"></i>Linha de Energia</p>
+                    <div class="grid grid-cols-3 gap-x-2 gap-y-1 text-center bg-slate-800/60 rounded-lg p-2 border border-slate-700/50">
+                        <div><p class="text-[9px] text-slate-400">PM</p><span id="out-pm-en-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400">PC</p><span id="out-pc-en-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400">PU</p><span id="out-pu-en-${id}" class="text-blue-300 font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400">PV</p><span id="out-pv-en-${id}" class="text-blue-300 font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400">PW</p><span id="out-pw-en-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400">PZ</p><span id="out-pz-en-${id}" class="font-bold">0.0000</span></div>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-[10px] text-sky-300/90 font-bold uppercase mb-1"><i class="fas fa-network-wired mr-1"></i>Linha de Sinal</p>
+                    <div class="grid grid-cols-3 gap-x-2 gap-y-1 text-center bg-slate-800/60 rounded-lg p-2 border border-slate-700/50">
+                        <div><p class="text-[9px] text-slate-400">PM</p><span id="out-pm-si-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400">PC</p><span id="out-pc-si-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400">PU</p><span id="out-pu-si-${id}" class="text-blue-300 font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400">PV</p><span id="out-pv-si-${id}" class="text-blue-300 font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400">PW</p><span id="out-pw-si-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400">PZ</p><span id="out-pz-si-${id}" class="font-bold">0.0000</span></div>
+                    </div>
+                </div>
+            </div>
         </div>
     `;
-    
+
     // Injeta a div no HTML sem usar innerHTML+=, preservando as outras zonas
     container.appendChild(div);
 
     if (AnaliseRisco.zonas.length >= 4) {
         document.getElementById('btn-add-zona').classList.add('hidden');
     }
-    
+
     calcularRiscos();
 }
 
 function removerZona(id) {
     AnaliseRisco.zonas = AnaliseRisco.zonas.filter(z => z.id !== id);
     document.getElementById(`zona-card-${id}`).remove();
-    
+
     // Renumera as tags visuais
     AnaliseRisco.zonas.forEach((z, idx) => {
         z.numero = idx + 1;
@@ -292,13 +417,13 @@ function removerZona(id) {
 // FUNÇÃO 5: O GRANDE MOTOR DE CÁLCULO UNIFICADO
 function calcularRiscos() {
     // ---------------------------------------------------------
-    // 1. CÁLCULOS DO ANEXO A (ESTRUTURA GLOBAL)
+    // 1. CÁLCULOS DO ANEXO A (ESTRUTURA GLOBAL) — NÃO ALTERADO
     // ---------------------------------------------------------
     const selectMunicipio = document.getElementById('municipio-select');
     NgAtual = parseFloat(selectMunicipio.value) || 0;
-    
+
     const display = document.getElementById('ng-display');
-    if(display) display.textContent = NgAtual;
+    if (display) display.textContent = NgAtual;
 
     const L = parseFloat(document.getElementById('dim-l').value) || 0;
     const W = parseFloat(document.getElementById('dim-w').value) || 0;
@@ -343,65 +468,89 @@ function calcularRiscos() {
     const Ni_si = NgAtual * Ai_si * Si_Ci * Si_Ct * Si_Ce * fatorDeRisco;
 
     // Output Anexo A
-    const formata = num => num.toLocaleString('pt-BR', {minimumFractionDigits: 5, maximumFractionDigits: 5});
-    const setVal = (elId, val) => { const el = document.getElementById(elId); if(el) el.innerText = val; };
+    const formata = num => num.toLocaleString('pt-BR', { minimumFractionDigits: 5, maximumFractionDigits: 5 });
+    const setVal = (elId, val) => { const el = document.getElementById(elId); if (el) el.innerText = val; };
 
     setVal('out-nd', formata(Nd)); setVal('out-nm', formata(Nm));
     setVal('out-ndj-en', formata(Ndj_en)); setVal('out-nl-en', formata(Nl_en)); setVal('out-ni-en', formata(Ni_en));
     setVal('out-ndj-si', formata(Ndj_si)); setVal('out-nl-si', formata(Nl_si)); setVal('out-ni-si', formata(Ni_si));
 
-
     // ---------------------------------------------------------
-    // 2. CÁLCULOS DO ANEXO B E C (POR ZONA)
+    // 2. CÁLCULOS DO ANEXO B (POR ZONA) — CORRIGIDO E COMPLETO
+    //    Fórmulas conforme "Anexo B cálculos.txt" (Eq. B.1 a B.11)
     // ---------------------------------------------------------
     AnaliseRisco.zonas.forEach(zona => {
         const id = zona.id;
-        if(!document.getElementById(`pta-${id}`)) return; 
+        if (!document.getElementById(`pta-${id}`)) return;
 
-        // Probabilidades base da Estrutura
+        // ---- Probabilidades base da Zona (fontes S1/S2 - Eq. B.1) ----
         const PTA = parseFloat(document.getElementById(`pta-${id}`).value) || 1;
-        const PB  = parseFloat(document.getElementById(`pb-${id}`).value) || 1;
+        const PB = parseFloat(document.getElementById(`pb-${id}`).value) || 1;
         const PSPD = parseFloat(document.getElementById(`pspd-${id}`).value) || 1;
-        const PA = PTA * PB;
+        const PA = PTA * PB; // Eq. B.1
 
-        // Fatores KS (Blindagem magnética)
+        // ---- Fatores KS (blindagem magnética da zona - Eq. B.5) ----
+        // KS1/KS2 = 0,12 x Wm (ou 1 se não houver blindagem/SPDA correspondente), limitado a 1
         const wm1 = parseFloat(document.getElementById(`wm1-${id}`).value) || 0;
         const wm2 = parseFloat(document.getElementById(`wm2-${id}`).value) || 0;
         let ks1 = wm1 > 0 ? 0.12 * wm1 : 1; ks1 = Math.min(ks1, 1);
         let ks2 = wm2 > 0 ? 0.12 * wm2 : 1; ks2 = Math.min(ks2, 1);
-        const ks3 = parseFloat(document.getElementById(`ks3-${id}`).value) || 1;
+        const ks3 = parseFloat(document.getElementById(`ks3-${id}`).value) || 1; // Tabela B.5
 
-        // Parâmetros Linha Energia
-        const Uw_en = parseFloat(document.getElementById(`uw-en-${id}`).value) || 2.5;
-        const cld_en = parseFloat(document.getElementById(`cld-en-${id}`).value) || 1;
-        const cli_en = cld_en; // Ligados no Anexo B.4
-        
-        const ptu_en = parseFloat(document.getElementById(`ptu-en-${id}`).value) || 1;
-        const peb_en = parseFloat(document.getElementById(`peb-en-${id}`).value) || 1;
-        const pld_en = parseFloat(document.getElementById(`pld-en-${id}`).value) || 1;
-        const pli_en = parseFloat(document.getElementById(`pli-en-${id}`).value) || 1;
+        // Função auxiliar: calcula todo o bloco de probabilidades de uma linha (energia ou sinal)
+        const calcularLinha = (prefixo) => {
+            const Uw = parseFloat(document.getElementById(`uw-${prefixo}-${id}`).value) || (prefixo === 'en' ? 2.5 : 1.5);
+            const cld = parseFloat(document.getElementById(`cld-${prefixo}-${id}`).value) || 1; // Tabela B.4 (serve para CLD e CLI)
+            const cli = cld;
 
-        const ks4_en = 1 / Uw_en;
-        const pms_en = Math.pow(ks1 * ks2 * ks3 * ks4_en, 2);
-        
-        const PM_en = PSPD * pms_en;
-        const PC_en = PSPD * cld_en;
-        const PU_en = ptu_en * peb_en * pld_en * cld_en;
-        const PV_en = peb_en * pld_en * cld_en;
-        const PW_en = PSPD * pld_en * cld_en;
-        const PZ_en = PSPD * pli_en * cli_en;
+            const ptu = parseFloat(document.getElementById(`ptu-${prefixo}-${id}`).value) || 1; // Tabela B.6
+            const peb = parseFloat(document.getElementById(`peb-${prefixo}-${id}`).value) || 1; // Tabela B.7
+            const pld = parseFloat(document.getElementById(`pld-${prefixo}-${id}`).value) || 1;  // Tabela B.8
+            const pli = parseFloat(document.getElementById(`pli-${prefixo}-${id}`).value) || 1;  // Tabela B.9
 
-        // Atualiza Outputs da Zona (Formatando 4 casas decimais para as probabilidades do Anexo B)
-        setVal(`out-pa-${id}`, PA.toFixed(4));
-        setVal(`out-pb-${id}`, PB.toFixed(4));
-        setVal(`out-pc-${id}`, PC_en.toFixed(4));
-        setVal(`out-pm-${id}`, PM_en.toFixed(4));
-        setVal(`out-pu-en-${id}`, PU_en.toFixed(4));
-        setVal(`out-pv-en-${id}`, PV_en.toFixed(4));
-        setVal(`out-pw-en-${id}`, PW_en.toFixed(4));
-        setVal(`out-pz-en-${id}`, PZ_en.toFixed(4));
-        
-        // (A linha de sinal será calculada aqui da mesma forma quando chegarmos na composição do R1)
+            const ks4 = 1 / Uw;                                    // Eq. B.7
+            const pms = Math.pow(ks1 * ks2 * ks3 * ks4, 2);        // Eq. B.4
+
+            const PM = PSPD * pms;             // Eq. B.3 - Falha de sistemas (surto por indução na zona)
+            const PC = PSPD * cld;             // Eq. B.2 - Falha por corte/centelhamento
+            const PU = ptu * peb * pld * cld;  // Eq. B.8 - Probabilidade de choque final
+            const PV = peb * pld * cld;        // Eq. B.9 - Probabilidade de incêndio final
+            const PW = PSPD * pld * cld;       // Eq. B.10 - Falha de sistemas (impacto direto na linha - S3)
+            const PZ = PSPD * pli * cli;       // Eq. B.11 - Falha de sistemas (indução próxima à linha - S4)
+
+            return { PM, PC, PU, PV, PW, PZ };
+        };
+
+        const resEn = calcularLinha('en');
+        const resSi = calcularLinha('si');
+
+        // ---- Atualiza Outputs da Zona ----
+        setVal(`out-pa-${id}`, formatProb(PA));
+        setVal(`out-pb-${id}`, formatProb(PB));
+
+        setVal(`out-pm-en-${id}`, formatProb(resEn.PM));
+        setVal(`out-pc-en-${id}`, formatProb(resEn.PC));
+        setVal(`out-pu-en-${id}`, formatProb(resEn.PU));
+        setVal(`out-pv-en-${id}`, formatProb(resEn.PV));
+        setVal(`out-pw-en-${id}`, formatProb(resEn.PW));
+        setVal(`out-pz-en-${id}`, formatProb(resEn.PZ));
+
+        setVal(`out-pm-si-${id}`, formatProb(resSi.PM));
+        setVal(`out-pc-si-${id}`, formatProb(resSi.PC));
+        setVal(`out-pu-si-${id}`, formatProb(resSi.PU));
+        setVal(`out-pv-si-${id}`, formatProb(resSi.PV));
+        setVal(`out-pw-si-${id}`, formatProb(resSi.PW));
+        setVal(`out-pz-si-${id}`, formatProb(resSi.PZ));
+
+        // Guarda os resultados no estado (útil para futura composição do R1 - Anexo C)
+        zona.anexoB_resultado = { PA, PB, PSPD, energia: resEn, sinal: resSi };
+
+        // ---------------------------------------------------------
+        // 3. ANEXO C (PERDAS) — ainda em branco, apenas coleta dados
+        // ---------------------------------------------------------
+        // Os campos nz, nt, tz já são coletados na interface para uso futuro.
+        // Os campos rt, rf, rp, hz permanecem desabilitados até a definição
+        // das tabelas normativas correspondentes.
     });
 }
 
