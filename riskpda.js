@@ -94,6 +94,7 @@ function toggleAdjacente() {
 }
 
 // FUNÇÃO 4: Motor Matemático NBR 5419-2 (Anexo A)
+// MOTOR MATEMÁTICO NBR 5419-2 (ANEXO A)
 function calcularAnexoA() {
     // 1. Busca do Ng baseado no Input Text
     const buscaNg = document.getElementById('ng-search').value;
@@ -125,44 +126,57 @@ function calcularAnexoA() {
     const Si_Ct = parseFloat(document.getElementById('linha-si-ct').value) || 1;
     const Si_Ce = parseFloat(document.getElementById('linha-si-ce').value) || 1;
 
-    // --- CÁLCULOS (Matemática da Norma) --- //
+    // CÁLCULOS DA NORMA
     const fatorDeRisco = Math.pow(10, -6);
 
-    // Estrutura
+    // Estrutura Principal (Eq. A.1, A.3, A.5, A.6)
     const Ad = (L * W) + (2 * (3 * H) * (L + W)) + (Math.PI * Math.pow(3 * H, 2));
     const Am = (2 * 500 * (L + W)) + (Math.PI * Math.pow(500, 2));
     const Nd = NgAtual * Ad * Cd * fatorDeRisco;
     const Nm = NgAtual * Am * fatorDeRisco;
 
-    // Adjacente
+    // Estrutura Adjacente (Eq. A.1, A.4)
     let Ndj = 0;
     if (document.getElementById('toggle-adjacente').checked) {
         const Adj = (L_adj * W_adj) + (2 * (3 * H_adj) * (L_adj + W_adj)) + (Math.PI * Math.pow(3 * H_adj, 2));
         Ndj = NgAtual * Adj * Cdj * fatorDeRisco;
     }
 
-    // Linha Energia (AL = 40*L, AI = 4000*L)
+    // Linha 1: Energia (Eq. A.7, A.8, A.9, A.10) - ISOLADA
     const Al_en = 40 * En_LL;
     const Ai_en = 4000 * En_LL;
     const Nl_en = NgAtual * Al_en * En_Ci * En_Ct * En_Ce * fatorDeRisco;
     const Ni_en = NgAtual * Ai_en * En_Ci * En_Ct * En_Ce * fatorDeRisco;
 
-    // Linha Sinal
+    // Linha 2: Sinal/Telecom (Eq. A.7, A.8, A.9, A.10) - ISOLADA
     const Al_si = 40 * Si_LL;
     const Ai_si = 4000 * Si_LL;
     const Nl_si = NgAtual * Al_si * Si_Ci * Si_Ct * Si_Ce * fatorDeRisco;
     const Ni_si = NgAtual * Ai_si * Si_Ci * Si_Ct * Si_Ce * fatorDeRisco;
 
-    // Total de Linhas
-    const Nl_total = Nl_en + Nl_si;
-    const Ni_total = Ni_en + Ni_si;
+    // ATUALIZAÇÃO DO OBJETO DE ESTADO (Preservando isolamento para uso futuro)
+    AnaliseRisco = {
+        anexoA: {
+            Nd, Nm, Ndj,
+            linhas: {
+                energia: { LL: En_LL, Ci: En_Ci, Ct: En_Ct, Ce: En_Ce, Nl: Nl_en, Ni: Ni_en },
+                sinal: { LL: Si_LL, Ci: Si_Ci, Ct: Si_Ct, Ce: Si_Ce, Nl: Nl_si, Ni: Ni_si }
+            }
+        }
+    };
 
-    // 5. Atualizar Interface
+    // EXIBIÇÃO NO DOM (7 MÉTIRCAS INDEPENDENTES)
     document.getElementById('out-nd').innerText = Nd.toLocaleString('pt-BR', {minimumFractionDigits: 5, maximumFractionDigits: 5});
     document.getElementById('out-nm').innerText = Nm.toLocaleString('pt-BR', {minimumFractionDigits: 5, maximumFractionDigits: 5});
     document.getElementById('out-ndj').innerText = Ndj.toLocaleString('pt-BR', {minimumFractionDigits: 5, maximumFractionDigits: 5});
-    document.getElementById('out-nl').innerText = Nl_total.toLocaleString('pt-BR', {minimumFractionDigits: 5, maximumFractionDigits: 5});
-    document.getElementById('out-ni').innerText = Ni_total.toLocaleString('pt-BR', {minimumFractionDigits: 5, maximumFractionDigits: 5});
+    
+    // Linha Energia
+    document.getElementById('out-nl-en').innerText = Nl_en.toLocaleString('pt-BR', {minimumFractionDigits: 5, maximumFractionDigits: 5});
+    document.getElementById('out-ni-en').innerText = Ni_en.toLocaleString('pt-BR', {minimumFractionDigits: 5, maximumFractionDigits: 5});
+    
+    // Linha Sinal
+    document.getElementById('out-nl-si').innerText = Nl_si.toLocaleString('pt-BR', {minimumFractionDigits: 5, maximumFractionDigits: 5});
+    document.getElementById('out-ni-si').innerText = Ni_si.toLocaleString('pt-BR', {minimumFractionDigits: 5, maximumFractionDigits: 5});
 }
 
 // Disparar carregamento ao iniciar o JS
