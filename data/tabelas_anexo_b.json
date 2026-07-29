@@ -1,0 +1,52 @@
+{
+  "tabela_B1_PTA": [
+    { "valor": 1.0, "descricao": "Nenhuma medida de proteção" },
+    { "valor": 0.1, "descricao": "Avisos de alerta (viabilidade)" },
+    { "valor": 0.01, "descricao": "Isolação elétrica (ex: 3mm polietileno)" },
+    { "valor": 0.01, "descricao": "Malha de equipotencialização no solo" },
+    { "valor": 0.001, "descricao": "Estrutura metálica contínua/concreto armado" },
+    { "valor": 0.0, "descricao": "Restrições físicas fixas" }
+  ],
+  "tabela_B2_PB": [
+    { "valor": 1.0, "descricao": "Estrutura não protegida por SPDA" },
+    { "valor": 0.2, "descricao": "Estrutura protegida por SPDA Nível IV" },
+    { "valor": 0.1, "descricao": "Estrutura protegida por SPDA Nível III" },
+    { "valor": 0.05, "descricao": "Estrutura protegida por SPDA Nível II" },
+    { "valor": 0.02, "descricao": "Estrutura protegida por SPDA Nível I" },
+    { "valor": 0.01, "descricao": "Estrutura com captação natural metálica/armadura" },
+    { "valor": 0.001, "descricao": "Estrutura com cobertura metálica (captação)" }
+  ],
+  "tabela_B3_PSPD": [
+    { "valor": 1.0, "descricao": "Nenhum sistema coordenado de DPS" },
+    { "valor": 0.05, "descricao": "DPS projetado para Nível III - IV" },
+    { "valor": 0.02, "descricao": "DPS projetado para Nível II" },
+    { "valor": 0.01, "descricao": "DPS projetado para Nível I" },
+    { "valor": 0.005, "descricao": "Melhor do que nível I" }
+  ],
+  "tabela_B4_CLD_CLI": [
+    { "valor": 1.0, "descricao": "Linha não blindada (Nenhuma ligação equipotencial)" },
+    { "valor": 0.2, "descricao": "Linha blindada (Energia c/ multi aterramento)" },
+    { "valor": 0.3, "descricao": "Linha blindada (Não interligada ao barramento)" },
+    { "valor": 0.0, "descricao": "Blindagem interligada ao mesmo barramento do eq." }
+  ],
+  "tabela_B5_KS3": [
+    { "valor": 1.0, "descricao": "Cabo não blindado - sem precaução (laços grandes)" },
+    { "valor": 0.5, "descricao": "Cabo não blindado - evitar laços grandes (>50m²)" },
+    { "valor": 0.2, "descricao": "Cabo não blindado - evitar laços médios (10m²)" },
+    { "valor": 0.01, "descricao": "Cabo não blindado - evitar laços pequenos (0.5m²)" },
+    { "valor": 0.0001, "descricao": "Cabos blindados ou em condutos metálicos contínuos" }
+  ],
+  "tabela_B6_PTU": [
+    { "valor": 1.0, "descricao": "Nenhuma medida de proteção" },
+    { "valor": 0.1, "descricao": "Avisos visíveis de alerta" },
+    { "valor": 0.01, "descricao": "Isolação elétrica" },
+    { "valor": 0.0, "descricao": "Restrições físicas" }
+  ],
+  "tabela_B7_PEB": [
+    { "valor": 1.0, "descricao": "Sem DPS Classe I" },
+    { "valor": 0.05, "descricao": "DPS projetado para Nível III - IV" },
+    { "valor": 0.02, "descricao": "DPS projetado para Nível II" },
+    { "valor": 0.01, "descricao": "DPS projetado para Nível I" },
+    { "valor": 0.005, "descricao": "Melhor do que nível I" }
+  ]
+}
