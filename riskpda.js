@@ -735,7 +735,11 @@ function calcularRiscos() {
         }
     });
 
-    const RT_R1 = 1e-5, RT_F = 1, RT_R4 = 1e-3;
+    const RT_R1 = 1e-5, RT_R4 = 1e-3;
+    const ftRadio = document.querySelector('input[name="ft-tipo"]:checked');
+    const RT_F = ftRadio ? parseFloat(ftRadio.value) : 1;
+    const ftLabel = document.getElementById('f-ft-label');
+    if (ftLabel) ftLabel.textContent = `FT = ${RT_F}`;
 
     const atualizarPainel = (base, valor, toleravel) => {
         const elVal    = document.getElementById(`${base}-valor`);

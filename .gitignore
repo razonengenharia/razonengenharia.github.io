@@ -2,6 +2,7 @@
 .agents/
 skills-lock.json
 .neon/
+.claude/
 
 # Variáveis de ambiente e segredos
 .env
