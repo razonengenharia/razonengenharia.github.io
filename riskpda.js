@@ -790,8 +790,9 @@ function calcularPerdaR4() {
     const elCtx = document.getElementById('r4-perda-contexto');
     if (!input || !box || !elVal) return;
 
-    const patrimonio = parseFloat(input.value);
+    let patrimonio = parseFloat(input.value);
     if (!patrimonio || patrimonio < 100) { box.classList.add('hidden'); return; }
+    if (patrimonio > 1_000_000_000) { input.value = 1_000_000_000; patrimonio = 1_000_000_000; }
 
     // Busca o R4 total calculado pelo último forEach
     const R4 = AnaliseRisco.zonas.reduce((s, z) => s + (z.anexoC_resultado?.R4 || 0), 0);
