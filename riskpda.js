@@ -395,17 +395,23 @@ function adicionarZona() {
                         `<select id="hz-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optHZ}</select>`)}
                 </div>
 
-                <div class="border-t border-amber-200/80 pt-2">
-                    <p class="text-[9px] text-amber-700 font-semibold uppercase mb-1.5 tracking-wide">Valores de Perda</p>
-                    <div class="grid grid-cols-2 gap-2">
-                        ${campoTip('LF — R1 (Tab. C.2)', TIPS_C.lf_r1,
+                <div class="border-t border-amber-200/80 pt-2 space-y-2">
+                    <p class="text-[9px] text-amber-700 font-semibold uppercase tracking-wide">Valores de Perda</p>
+
+                    <div class="rounded-lg border border-amber-100 bg-white/70 p-2 space-y-2">
+                        <p class="text-[9px] text-slate-400 font-semibold uppercase tracking-wide">R1 — Vidas (Tab. C.2)</p>
+                        ${campoTip('LF — danos físicos / incêndio', TIPS_C.lf_r1,
                             `<select id="lf-r1-${id}" class="w-full p-1.5 bg-white border border-amber-200 rounded text-[10px]" onchange="calcularRiscos()">${optLF_C2}</select>`)}
-                        ${campoTip('LO — R1 (Tab. C.2)', TIPS_C.lo_r1,
+                        ${campoTip('LO — falha de sistemas', TIPS_C.lo_r1,
                             `<select id="lo-r1-${id}" class="w-full p-1.5 bg-white border border-amber-200 rounded text-[10px]" onchange="calcularRiscos()">${optLO_C2}</select>`)}
-                        ${campoTip('LF — R4 (Tab. D.2)', TIPS_C.lf_r4,
-                            `<select id="lf-r4-${id}" class="w-full p-1.5 bg-white border border-amber-200 rounded text-[10px]" onchange="calcularRiscos()">${optLF_D2}</select>`)}
-                        ${campoTip('LO — R4 (Tab. D.2)', TIPS_C.lo_r4,
-                            `<select id="lo-r4-${id}" class="w-full p-1.5 bg-white border border-amber-200 rounded text-[10px]" onchange="calcularRiscos()">${optLO_D2}</select>`)}
+                    </div>
+
+                    <div class="rounded-lg border border-emerald-100 bg-white/70 p-2 space-y-2">
+                        <p class="text-[9px] text-slate-400 font-semibold uppercase tracking-wide">R4 — Econômico (Tab. D.2)</p>
+                        ${campoTip('LF — danos físicos / incêndio', TIPS_C.lf_r4,
+                            `<select id="lf-r4-${id}" class="w-full p-1.5 bg-white border border-emerald-200 rounded text-[10px]" onchange="calcularRiscos()">${optLF_D2}</select>`)}
+                        ${campoTip('LO — falha de sistemas', TIPS_C.lo_r4,
+                            `<select id="lo-r4-${id}" class="w-full p-1.5 bg-white border border-emerald-200 rounded text-[10px]" onchange="calcularRiscos()">${optLO_D2}</select>`)}
                     </div>
                 </div>
 
