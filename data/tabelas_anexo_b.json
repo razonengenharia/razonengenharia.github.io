@@ -48,5 +48,43 @@
     { "valor": 0.02, "descricao": "DPS projetado para Nível II" },
     { "valor": 0.01, "descricao": "DPS projetado para Nível I" },
     { "valor": 0.005, "descricao": "Melhor do que nível I" }
-  ]
+  ],
+  "tabela_B8_PLD": [
+    {
+      "descricao": "Não blindada / blindagem não interligada",
+      "rs": "nenhuma",
+      "valores_uw": { "0.35": 1, "0.5": 1, "1": 1, "1.5": 1, "2.5": 1, "4": 1, "6": 1 }
+    },
+    {
+      "descricao": "Blindada, interligada, 5 Ω/km < RS ≤ 20 Ω/km",
+      "rs": "5_20",
+      "valores_uw": { "0.35": 1, "0.5": 1, "1": 1, "1.5": 1, "2.5": 0.95, "4": 0.9, "6": 0.8 }
+    },
+    {
+      "descricao": "Blindada, interligada, 1 Ω/km < RS ≤ 5 Ω/km",
+      "rs": "1_5",
+      "valores_uw": { "0.35": 1, "0.5": 1, "1": 0.9, "1.5": 0.8, "2.5": 0.6, "4": 0.3, "6": 0.1 }
+    },
+    {
+      "descricao": "Blindada, interligada, RS ≤ 1 Ω/km",
+      "rs": "le1",
+      "valores_uw": { "0.35": 1, "0.5": 0.85, "1": 0.6, "1.5": 0.4, "2.5": 0.2, "4": 0.04, "6": 0.02 }
+    }
+  ],
+  "tabela_B9_PLI": {
+    "energia": [
+      { "uw": 1,   "valor": 1    },
+      { "uw": 1.5, "valor": 0.6  },
+      { "uw": 2.5, "valor": 0.3  },
+      { "uw": 4,   "valor": 0.16 },
+      { "uw": 6,   "valor": 0.1  }
+    ],
+    "sinal": [
+      { "uw": 1,   "valor": 1    },
+      { "uw": 1.5, "valor": 0.5  },
+      { "uw": 2.5, "valor": 0.2  },
+      { "uw": 4,   "valor": 0.08 },
+      { "uw": 6,   "valor": 0.04 }
+    ]
+  }
 }

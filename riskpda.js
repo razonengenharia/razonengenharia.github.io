@@ -249,6 +249,27 @@ function adicionarZona() {
     const optPTU = TABELAS_B.tabela_B6_PTU.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
     const optPEB = TABELAS_B.tabela_B7_PEB.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
 
+    const UW_EN = '2.5';
+    const UW_SI = '1.5';
+
+    const optPLD_en = TABELAS_B.tabela_B8_PLD.map(c => {
+        const v = c.valores_uw[UW_EN];
+        return `<option value="${v}">${c.descricao} (${v})</option>`;
+    }).join('');
+
+    const optPLD_si = TABELAS_B.tabela_B8_PLD.map(c => {
+        const v = c.valores_uw[UW_SI];
+        return `<option value="${v}">${c.descricao} (${v})</option>`;
+    }).join('');
+
+    const optPLI_en = TABELAS_B.tabela_B9_PLI.energia.map(item =>
+        `<option value="${item.valor}" ${String(item.uw) === UW_EN ? 'selected' : ''}>UN = ${item.uw} kV → PLI = ${item.valor}</option>`
+    ).join('');
+
+    const optPLI_si = TABELAS_B.tabela_B9_PLI.sinal.map(item =>
+        `<option value="${item.valor}" ${String(item.uw) === UW_SI ? 'selected' : ''}>UN = ${item.uw} kV → PLI = ${item.valor}</option>`
+    ).join('');
+
     div.innerHTML = `
         <div class="bg-slate-100 rounded-t-2xl px-6 py-4 border-b border-slate-200 flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -296,14 +317,12 @@ function adicionarZona() {
                 ${campoTip('Blindagem (CLD/CLI)', TIPS_B.cld,
                     `<select id="cld-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select>`)}
 
-                <div class="grid grid-cols-3 gap-1">
-                    ${campoTip('Uw (kV)', TIPS_B.uw,
-                        `<input type="number" id="uw-en-${id}" value="2.5" step="0.5" min="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
-                    ${campoTip('PLD', TIPS_B.pld,
-                        `<input type="number" id="pld-en-${id}" value="1" step="0.1" min="0" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
-                    ${campoTip('PLI', TIPS_B.pli,
-                        `<input type="number" id="pli-en-${id}" value="0.3" step="0.1" min="0" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
-                </div>
+                ${campoTip('Uw (kV) — fixo', TIPS_B.uw,
+                    `<input type="number" id="uw-en-${id}" value="2.5" class="w-full p-2 border border-slate-200 rounded text-xs bg-slate-100 text-slate-500 cursor-not-allowed" readonly>`)}
+                ${campoTip('PLD (Tab. B.8)', TIPS_B.pld,
+                    `<select id="pld-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLD_en}</select>`)}
+                ${campoTip('PLI (Tab. B.9)', TIPS_B.pli,
+                    `<select id="pli-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLI_en}</select>`)}
             </div>
 
             <!-- Anexo B: Sinal -->
@@ -319,14 +338,12 @@ function adicionarZona() {
                 ${campoTip('Blindagem (CLD/CLI)', TIPS_B.cld,
                     `<select id="cld-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select>`)}
 
-                <div class="grid grid-cols-3 gap-1">
-                    ${campoTip('Uw (kV)', TIPS_B.uw,
-                        `<input type="number" id="uw-si-${id}" value="1.5" step="0.5" min="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
-                    ${campoTip('PLD', TIPS_B.pld,
-                        `<input type="number" id="pld-si-${id}" value="1" step="0.1" min="0" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
-                    ${campoTip('PLI', TIPS_B.pli,
-                        `<input type="number" id="pli-si-${id}" value="0.5" step="0.1" min="0" max="1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
-                </div>
+                ${campoTip('Uw (kV) — fixo', TIPS_B.uw,
+                    `<input type="number" id="uw-si-${id}" value="1.5" class="w-full p-2 border border-slate-200 rounded text-xs bg-slate-100 text-slate-500 cursor-not-allowed" readonly>`)}
+                ${campoTip('PLD (Tab. B.8)', TIPS_B.pld,
+                    `<select id="pld-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLD_si}</select>`)}
+                ${campoTip('PLI (Tab. B.9)', TIPS_B.pli,
+                    `<select id="pli-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLI_si}</select>`)}
             </div>
 
             <!-- Anexo C: Perdas (em branco por enquanto) -->
