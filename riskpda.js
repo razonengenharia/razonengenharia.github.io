@@ -762,6 +762,50 @@ function calcularRiscos() {
     atualizarPainel('r1', R1_total, RT_R1);
     atualizarPainel('f',  F_total,  RT_F);
     atualizarPainel('r4', R4_total, RT_R4);
+
+    // Atualiza interpretação de % no card R4
+    const r4Pct    = document.getElementById('r4-percentual');
+    const r4PctVal = document.getElementById('r4-pct-valor');
+    if (r4Pct && r4PctVal) {
+        if (R4_total > 0) {
+            const pct = (R4_total * 100).toLocaleString('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+            r4PctVal.textContent = `${pct}%`;
+            r4Pct.classList.remove('hidden');
+        } else {
+            r4Pct.classList.add('hidden');
+        }
+    }
+
+    // Roda o simulador de R$ caso o usuário já tenha preenchido o campo
+    calcularPerdaR4();
+}
+
+function calcularPerdaR4() {
+    const input = document.getElementById('r4-patrimonio');
+    const box   = document.getElementById('r4-perda-reais');
+    const elVal = document.getElementById('r4-perda-valor');
+    const elCtx = document.getElementById('r4-perda-contexto');
+    if (!input || !box || !elVal) return;
+
+    const patrimonio = parseFloat(input.value);
+    if (!patrimonio || patrimonio < 100) { box.classList.add('hidden'); return; }
+
+    // Busca o R4 total calculado pelo último forEach
+    const R4 = AnaliseRisco.zonas.reduce((s, z) => s + (z.anexoC_resultado?.R4 || 0), 0);
+    if (R4 <= 0) { box.classList.add('hidden'); return; }
+
+    const perdaAnual = R4 * patrimonio;
+    const perdaFmt   = perdaAnual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    elVal.textContent = perdaFmt;
+
+    // Contexto: quanto tempo para perder 1% do patrimônio
+    const anosParaUmPct = (0.01 / R4);
+    elCtx.textContent = anosParaUmPct >= 2
+        ? `Equivale a 1% do patrimônio a cada ${anosParaUmPct.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} anos`
+        : `Equivale a ${(R4 * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}% do patrimônio por ano`;
+
+    box.classList.remove('hidden');
 }
 
 document.addEventListener('DOMContentLoaded', carregarDados);
