@@ -348,9 +348,11 @@ function adicionarZona() {
                         `<select id="pspd-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPSPD}</select>`)}
                     <div class="grid grid-cols-2 gap-2">
                         ${campoTip('Wm1 (m)', TIPS_B.wm1,
-                            `<input type="number" id="wm1-${id}" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                            `<input type="number" id="wm1-${id}" value="0" min="0" step="0.1" disabled class="w-full p-2 border rounded text-xs bg-slate-100 text-slate-500 cursor-not-allowed" oninput="calcularRiscos()">
+                             <button type="button" onclick="desbloquearWm('wm1-${id}',this)" class="mt-1 text-[9px] text-slate-400 hover:text-razon-copper underline underline-offset-2">editar</button>`)}
                         ${campoTip('Wm2 (m)', TIPS_B.wm2,
-                            `<input type="number" id="wm2-${id}" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                            `<input type="number" id="wm2-${id}" value="0" min="0" step="0.1" disabled class="w-full p-2 border rounded text-xs bg-slate-100 text-slate-500 cursor-not-allowed" oninput="calcularRiscos()">
+                             <button type="button" onclick="desbloquearWm('wm2-${id}',this)" class="mt-1 text-[9px] text-slate-400 hover:text-razon-copper underline underline-offset-2">editar</button>`)}
                     </div>
                     ${campoTip('Fiação Interna (KS3)', TIPS_B.ks3,
                         `<select id="ks3-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optKS3}</select>`)}
@@ -834,6 +836,15 @@ function calcularRiscos() {
 
     // Roda o simulador de R$ caso o usuário já tenha preenchido o campo
     calcularPerdaR4();
+}
+
+function desbloquearWm(inputId, btn) {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    el.disabled = false;
+    el.classList.remove('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+    el.focus();
+    btn.remove();
 }
 
 function sincronizarCLD(cldEl, id, prefixo) {
