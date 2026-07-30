@@ -274,7 +274,24 @@ A seleção de FT para F (crítico ou não crítico) é feita pelo usuário dire
 - **Mesmo roteamento**: usar somente a linha de pior característica (geralmente sinal, por ter menor Uw e CT=1 sem atenuação de transformador). Não somar.
 - **Roteamentos diferentes**: calcular os componentes independentemente para cada linha e somar.
 
-### Tooltips de resultado (painel escuro por zona)
+### Tooltips de resultado — Anexo A (painel escuro global)
+
+Os 8 labels de frequência anual no painel escuro do Anexo A possuem ícone `ⓘ` com tooltip ao hover:
+
+| Label | Explicação |
+|-------|-----------|
+| **Nd** | Raios que atingem diretamente o prédio (Fonte S1) |
+| **Nm** | Raios que caem perto do prédio → interferência magnética (Fonte S2) |
+| **Ndj Energia** | Raios no prédio vizinho → viajam pelo cabo de energia (Fonte S3 adj.) |
+| **Nl Energia** | Raios que atingem diretamente a fiação de energia da rua (Fonte S3) |
+| **Ni Energia** | Raios perto da fiação de energia → surto induzido (Fonte S4) |
+| **Ndj Sinal** | Raios no prédio vizinho → viajam pelo cabo de sinal (Fonte S3 adj.) |
+| **Nl Sinal** | Raios que atingem diretamente a fiação de sinal da rua (Fonte S3) |
+| **Ni Sinal** | Raios perto da fiação de sinal → surto induzido (Fonte S4) |
+
+Implementado diretamente no HTML estático (não via `tipRes`) com o mesmo padrão `.has-tooltip`/`.tooltip-box`. Tooltip branco sobre fundo escuro.
+
+### Tooltips de resultado — Anexo B/C (painel escuro por zona)
 
 Cada célula de probabilidade (PM, PC, PU, PV, PW, PZ) e de perda (LA=LU, LB=LV, LC=LM=LW=LZ) no painel escuro de resultados possui um ícone `ⓘ` que exibe um tooltip explicativo ao passar o mouse.
 
