@@ -268,31 +268,109 @@ A seleção de FT para F (crítico ou não crítico) é feita pelo usuário dire
 - **Anexos B e C são zonais**: cada zona tem seus próprios fatores de proteção, uso e ocupação.
 - O risco total é a **soma** dos riscos de todas as zonas.
 
-### Filtro de Existência de Serviço (Rede Pública vs. ADJ)
+### Filtro de Existência de Serviço — Fonte Externa e Estrutura Adjacente
 
-Cada linha (Energia e Sinal) tem dois interruptores independentes de existência de conexão:
+#### Conceito geral
 
-| Controle | Localização | Efeito quando OFF |
-|----------|-------------|-------------------|
-| "Rede pública" — Energia | Card Linha de Energia (Seção 3) | `Nl_en = 0`, `Ni_en = 0` |
-| "Rede pública" — Sinal | Card Linha de Sinal (Seção 3) | `Nl_si = 0`, `Ni_si = 0` |
-| ADJ — Energia | Dropdown "Serviços interligados" | `Ndj_en = 0` |
-| ADJ — Sinal | Dropdown "Serviços interligados" | `Ndj_si = 0` |
+Cada linha (Energia e Sinal) pode receber surtos de até **duas fontes independentes**:
 
-- Os toggles de Rede Pública iniciam **ligados** (a maioria das edificações tem conexão com a concessionária).
-- O filtro é aplicado em `calcularRiscos()` após o cálculo de `Nl`/`Ni`, zerando antes de usar nas fórmulas de risco.
-- As fórmulas `(Nl + Ndj)` não mudam — o efeito é alcançado zerando os componentes individualmente.
-- Quando OFF, os campos do card (LL, Ci, Ct, Ce) ficam com `opacity-40 pointer-events-none` (visíveis mas não editáveis) para preservar os valores caso o toggle seja reativado.
+| Fonte | O que representa | Frequência gerada |
+|-------|-----------------|-------------------|
+| **Fonte Externa** | Cabo vindo da concessionária (rede pública de energia ou telecom) ou de qualquer alimentação externa direta que não seja o prédio adjacente definido no bloco ADJ | `Nl` (impacto direto na linha) + `Ni` (indução próxima à linha) |
+| **Estrutura Adjacente (ADJ)** | Cabo metálico vindo de outro prédio fisicamente interligado, cujas dimensões e localização são informadas no bloco ADJ | `Ndj` |
 
-**Implementado por:** `toggleRua(prefixo)` (IDs `rua-energia` e `rua-sinal`; containers `linha-en-campos` e `linha-si-campos`).
+O risco de linha de cada zona usa a **soma** das duas fontes: `(Nl + Ndj)`. Cada parcela pode ser zero individualmente — o que muda é apenas a origem física do perigo, não a fórmula.
 
-**Exemplos de configuração:**
+#### Os quatro interruptores de existência
 
-| Cenário | Rua En | Rua Si | ADJ En | ADJ Si |
-|---------|--------|--------|--------|--------|
-| Edícula sem relógio próprio | OFF | OFF | ON | depende |
-| Galpão + fibra + interfone metálico | ON | OFF | OFF | ON |
-| Bomba de recalque isolada | OFF | OFF | ON | OFF |
+| Interruptor | Localização na UI | Quando OFF — variáveis zeradas |
+|-------------|------------------|---------------------------------|
+| **Fonte Externa — Energia** | Toggle "Fonte Externa" no card Linha de Energia | `Nl_en = 0`, `Ni_en = 0` |
+| **Fonte Externa — Sinal** | Toggle "Fonte Externa" no card Linha de Sinal | `Nl_si = 0`, `Ni_si = 0` |
+| **ADJ — Energia** | Dropdown "Serviços interligados" → "Apenas Sinal" | `Ndj_en = 0` |
+| **ADJ — Sinal** | Dropdown "Serviços interligados" → "Apenas Energia" | `Ndj_si = 0` |
+
+**Estado padrão:** Fonte Externa ligada para ambas as linhas (concessionária presente); ADJ desativado.
+
+#### Impacto nos cálculos de risco
+
+O filtro é aplicado em `calcularRiscos()` após calcular `Nl`/`Ni`, **antes** de entrar nas fórmulas. Nenhuma fórmula muda — o efeito é obtido zerando as variáveis.
+
+**Componentes S3 — afetados por `Nl` e `Ndj`:**
+
+| Componente | Fórmula resumida |
+|-----------|-----------------|
+| RU | `(Nl + Ndj) × PU × LU` |
+| RV | `(Nl + Ndj) × PV × LV` |
+| RW | `(Nl + Ndj) × PW × LC` |
+| FV | `(Nl + Ndj) × PEB` |
+| FW | `(Nl + Ndj) × PW` |
+| RV_R4 | `(Nl + Ndj) × PV × LB_R4` |
+| RW_R4 | `(Nl + Ndj) × PW × LO_R4` |
+
+**Componentes S4 — afetados apenas por `Ni` (Fonte Externa):**
+
+| Componente | Fórmula resumida |
+|-----------|-----------------|
+| RZ | `Ni × PZ × LC` |
+| FZ | `Ni × PZ` |
+| RZ_R4 | `Ni × PZ × LO_R4` |
+
+> Componentes **não afetados** pelos interruptores de linha: RA, RB, RC, RM, FB, FC, FM (fontes S1 e S2 — impacto na estrutura ou LEMP próximo, sem envolvimento de linhas condutoras).
+
+#### Exemplos de configuração real
+
+---
+
+**Exemplo 1 — Edícula / Puxadinho (sem Fonte Externa, só ADJ Energia)**
+
+> Edícula nos fundos do lote que não possui relógio de luz próprio. Recebe um cabo de energia vindo diretamente da casa principal. Não há nenhum cabo de dados.
+
+| | Energia | Sinal |
+|-|---------|-------|
+| Fonte Externa | **OFF** | **OFF** |
+| ADJ | **ON** | OFF |
+
+**Resultado:** O risco de energia é calculado apenas com o surto que nasce na casa principal (`Ndj_en`) e viaja pelo cabo. `Nl_en = 0`, `Ni_en = 0` (sem ligação com a concessionária). Todos os componentes de sinal são zero — não há cabo de dados.
+
+---
+
+**Exemplo 2 — Galpão Industrial com Fibra Ótica e Interfone Metálico**
+
+> Galpão industrial que recebe energia da concessionária. A comunicação com o prédio vizinho (escritório) é feita por **fibra ótica** (material dielétrico, não conduz surto). Existe também um **cabo de interfone metálico** entre os dois prédios.
+
+| | Energia | Sinal |
+|-|---------|-------|
+| Fonte Externa | **ON** | **OFF** ← fibra ótica não conduz surto |
+| ADJ | **OFF** ← sem ligação elétrica entre prédios | **ON** ← interfone metálico |
+
+**Resultado:** O risco de energia vem exclusivamente da rua (`Nl_en`). O risco de sinal vem exclusivamente do prédio vizinho via interfone (`Ndj_si`). `Nl_si = 0` (fibra), `Ndj_en = 0` (sem ligação elétrica com o ADJ).
+
+---
+
+**Exemplo 3 — Ilha de Bombeamento Isolada (apenas ADJ Energia)**
+
+> Bomba de recalque instalada em área rural afastada. Não há cabos de dados. Recebe apenas um cabo de força vindo do galpão principal, que é a estrutura adjacente.
+
+| | Energia | Sinal |
+|-|---------|-------|
+| Fonte Externa | **OFF** | **OFF** |
+| ADJ | **ON** | **OFF** |
+
+**Resultado:** Todos os componentes de sinal (RU/si, RW/si, FV/si, FW/si, RZ/si) são zero — não existem cabos de sinal. O risco de energia é calculado exclusivamente com `Ndj_en`. Esta é a configuração normativamente mais simples: uma única fonte de perigo, vinda do galpão.
+
+---
+
+#### Matriz de combinações
+
+| Fonte En | Fonte Si | ADJ En | ADJ Si | Nl_en | Ni_en | Nl_si | Ni_si | Ndj_en | Ndj_si |
+|:--------:|:--------:|:------:|:------:|:-----:|:-----:|:-----:|:-----:|:------:|:------:|
+| ON | ON | OFF | OFF | ✓ | ✓ | ✓ | ✓ | 0 | 0 |
+| OFF | OFF | ON | ON | 0 | 0 | 0 | 0 | ✓ | ✓ |
+| ON | OFF | OFF | ON | ✓ | ✓ | 0 | 0 | 0 | ✓ |
+| OFF | OFF | ON | OFF | 0 | 0 | 0 | 0 | ✓ | 0 |
+
+**Implementado por:** `toggleRua(prefixo)` (IDs `rua-energia`, `rua-sinal`; containers `linha-en-campos`, `linha-si-campos`). Quando OFF: `opacity-40 pointer-events-none` nos campos do card (valores preservados para reativação futura).
 
 ---
 
