@@ -42,48 +42,52 @@ async function carregarDados() {
     }
 }
 
-// FUNÇÃO 2: POPULAR SELECTS ANEXO A
+// FUNÇÃO 2: POPULAR FILTROS GLOBAIS + AUTOCOMPLETE DE MUNICÍPIO
+function _normStr(s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
+function filtrarMunicipios(q) {
+    const lista = document.getElementById('municipio-sugestoes');
+    if (!lista) return;
+    const termo = _normStr(q.trim());
+    if (!termo || termo.length < 2) { lista.classList.add('hidden'); return; }
+
+    const resultados = [];
+    for (let i = 0; i < LISTA_NG.length && resultados.length < 10; i++) {
+        const item = LISTA_NG[i];
+        if (_normStr(item.m).includes(termo)) resultados.push(item);
+    }
+
+    if (!resultados.length) { lista.classList.add('hidden'); return; }
+
+    lista.innerHTML = resultados.map(r =>
+        `<li class="px-4 py-2 cursor-pointer hover:bg-razon-copper/10 flex justify-between items-center"
+             data-ng="${r.n}" data-label="${r.m} (${r.u})"
+             onmousedown="selecionarMunicipio(this)">
+            <span>${r.m}</span>
+            <span class="text-[10px] text-slate-400 font-mono ml-2">${r.u} · Ng ${r.n}</span>
+        </li>`
+    ).join('');
+    lista.classList.remove('hidden');
+}
+
+function selecionarMunicipio(el) {
+    const input = document.getElementById('municipio-input');
+    if (input) input.value = el.dataset.label;
+    NgAtual = parseFloat(el.dataset.ng) || 0;
+    const display = document.getElementById('ng-display');
+    if (display) display.textContent = NgAtual;
+    fecharSugestoes();
+    calcularRiscos();
+}
+
+function fecharSugestoes() {
+    const lista = document.getElementById('municipio-sugestoes');
+    if (lista) lista.classList.add('hidden');
+}
+
 function popularFiltrosGlobais() {
-    const estadoSelect = document.getElementById('estado-select');
-    const municipioSelect = document.getElementById('municipio-select');
-
-    // Agrupa e Ordena UFs
-    const ufs = [...new Set(LISTA_NG.map(item => item.uf))].sort();
-
-    estadoSelect.innerHTML = '<option value="">Selecione o Estado</option>';
-    ufs.forEach(uf => {
-        const opt = document.createElement('option');
-        opt.value = uf;
-        opt.textContent = uf;
-        estadoSelect.appendChild(opt);
-    });
-
-    estadoSelect.addEventListener('change', (e) => {
-        const uf = e.target.value;
-        municipioSelect.innerHTML = '<option value="">Selecione a Cidade</option>';
-        if (!uf) {
-            municipioSelect.disabled = true;
-            NgAtual = 0;
-            calcularRiscos();
-            return;
-        }
-
-        const cidades = LISTA_NG.filter(item => item.uf === uf).sort((a, b) => a.municipio.localeCompare(b.municipio));
-        cidades.forEach(m => {
-            const opt = document.createElement('option');
-            opt.value = m.ng;
-            opt.dataset.nome = m.municipio;
-            opt.textContent = m.municipio;
-            municipioSelect.appendChild(opt);
-        });
-
-        municipioSelect.disabled = false;
-        NgAtual = 0;
-        calcularRiscos();
-    });
-
-    municipioSelect.addEventListener('change', () => calcularRiscos());
-
     const preencherSelect = (id, dados) => {
         const el = document.getElementById(id);
         if (!el) return;
@@ -108,16 +112,15 @@ function popularFiltrosGlobais() {
     if (document.getElementById('linha-si-ct').options.length > 0) document.getElementById('linha-si-ct').value = "1";
     if (document.getElementById('linha-en-ct').options.length > 0) document.getElementById('linha-en-ct').value = "0.2";
 
-    estadoSelect.value = "SP";
-    estadoSelect.dispatchEvent(new Event('change'));
-
-    setTimeout(() => {
-        const ara = Array.from(municipioSelect.options).find(o => o.dataset.nome === 'Araçatuba');
-        if (ara) {
-            municipioSelect.value = ara.value;
-            calcularRiscos();
-        }
-    }, 150);
+    // Pré-seleciona Araçatuba (SP) como padrão
+    const defaultItem = LISTA_NG.find(i => i.m === 'Araçatuba' && i.u === 'SP');
+    if (defaultItem) {
+        const input = document.getElementById('municipio-input');
+        if (input) input.value = `${defaultItem.m} (${defaultItem.u})`;
+        NgAtual = defaultItem.n;
+        const display = document.getElementById('ng-display');
+        if (display) display.textContent = NgAtual;
+    }
 }
 
 // FUNÇÃO 3: CONTROLE DE LIMITES E UI
@@ -528,9 +531,7 @@ function calcularRiscos() {
     // ---------------------------------------------------------
     // 1. CÁLCULOS DO ANEXO A (ESTRUTURA GLOBAL) — NÃO ALTERADO
     // ---------------------------------------------------------
-    const selectMunicipio = document.getElementById('municipio-select');
-    NgAtual = parseFloat(selectMunicipio.value) || 0;
-
+    // NgAtual é atualizado por selecionarMunicipio(); só relê se já estiver definido
     const display = document.getElementById('ng-display');
     if (display) display.textContent = NgAtual;
 

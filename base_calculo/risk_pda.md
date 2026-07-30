@@ -18,11 +18,26 @@ razonengenharia.github.io/
 ├── riskpda.html               # Interface completa (layout, painel de resultados)
 ├── riskpda.js                 # Motor de cálculo único (Anexos A, B, C)
 └── data/
-    ├── municipios_ng.json     # Densidade de raios (Ng) por município/UF
+    ├── municipios_ng.json     # Ng por município: 2975 registros, chaves compactas {m, u, n}
     ├── tabelas_anexo_a.json   # Tabelas A1 (Cd), A2 (Ci), A3 (Ct), A4 (Ce)
     ├── tabelas_anexo_b.json   # Tabelas B1–B9 (PTA, PB, PSPD, CLD, KS3, PTU, PEB, PLD, PLI)
     └── tabelas_anexo_c.json   # Tabelas C2–C7 e D2 (rt, rp, rf, hz, rs, LF, LO)
 ```
+
+### municipios_ng.json — estrutura
+
+Fonte: Tabela da NBR 5419-2:2026 (2975 municípios). Gerado a partir da planilha `ng.xlsx`.
+
+```json
+[{"m":"Araçatuba","u":"SP","n":14}, ...]
+```
+
+- `m`: nome do município (UTF-8, NFC normalizado)
+- `u`: UF (2 letras maiúsculas)
+- `n`: Ng em raios/km²/ano (sempre par, entre 0 e 32)
+- Ordenado alfabeticamente por nome normalizado (NFKD lowercase) para busca eficiente
+
+**Busca no cliente:** autocomplete text input (`#municipio-input`) com `filtrarMunicipios()` — normaliza a string via `NFD` + strip diacríticos para busca accent-insensitive. Exibe até 10 sugestões. Ao selecionar, atualiza `NgAtual` e dispara `calcularRiscos()`.
 
 ### Estado global em JS
 
