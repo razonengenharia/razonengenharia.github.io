@@ -268,6 +268,34 @@ A seleção de FT para F (crítico ou não crítico) é feita pelo usuário dire
 - **Anexos B e C são zonais**: cada zona tem seus próprios fatores de proteção, uso e ocupação.
 - O risco total é a **soma** dos riscos de todas as zonas.
 
+### Filtro de Existência de Serviço (Rede Pública vs. ADJ)
+
+Cada linha (Energia e Sinal) tem dois interruptores independentes de existência de conexão:
+
+| Controle | Localização | Efeito quando OFF |
+|----------|-------------|-------------------|
+| "Rede pública" — Energia | Card Linha de Energia (Seção 3) | `Nl_en = 0`, `Ni_en = 0` |
+| "Rede pública" — Sinal | Card Linha de Sinal (Seção 3) | `Nl_si = 0`, `Ni_si = 0` |
+| ADJ — Energia | Dropdown "Serviços interligados" | `Ndj_en = 0` |
+| ADJ — Sinal | Dropdown "Serviços interligados" | `Ndj_si = 0` |
+
+- Os toggles de Rede Pública iniciam **ligados** (a maioria das edificações tem conexão com a concessionária).
+- O filtro é aplicado em `calcularRiscos()` após o cálculo de `Nl`/`Ni`, zerando antes de usar nas fórmulas de risco.
+- As fórmulas `(Nl + Ndj)` não mudam — o efeito é alcançado zerando os componentes individualmente.
+- Quando OFF, os campos do card (LL, Ci, Ct, Ce) ficam com `opacity-40 pointer-events-none` (visíveis mas não editáveis) para preservar os valores caso o toggle seja reativado.
+
+**Implementado por:** `toggleRua(prefixo)` (IDs `rua-energia` e `rua-sinal`; containers `linha-en-campos` e `linha-si-campos`).
+
+**Exemplos de configuração:**
+
+| Cenário | Rua En | Rua Si | ADJ En | ADJ Si |
+|---------|--------|--------|--------|--------|
+| Edícula sem relógio próprio | OFF | OFF | ON | depende |
+| Galpão + fibra + interfone metálico | ON | OFF | OFF | ON |
+| Bomba de recalque isolada | OFF | OFF | ON | OFF |
+
+---
+
 ### Estrutura Adjacente
 
 Ativada por toggle. Quando ativa, o usuário informa L/W/H e Cdj da edificação adjacente.

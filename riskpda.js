@@ -175,6 +175,16 @@ function toggleAdjacente() {
     }
     calcularRiscos();
 }
+function toggleRua(prefixo) {
+    const campos = document.getElementById(prefixo === 'en' ? 'linha-en-campos' : 'linha-si-campos');
+    const ativo = document.getElementById(prefixo === 'en' ? 'rua-energia' : 'rua-sinal')?.checked;
+    if (!campos) return;
+    if (ativo) {
+        campos.classList.remove('opacity-40', 'pointer-events-none');
+    } else {
+        campos.classList.add('opacity-40', 'pointer-events-none');
+    }
+}
 // ================= FIM DO BLOCO ANEXO A (NÃO ALTERADO) =================
 
 
@@ -606,12 +616,15 @@ function calcularRiscos() {
     }
 
     const Al_en = 40 * En_LL, Ai_en = 4000 * En_LL;
-    const Nl_en = NgAtual * Al_en * En_Ci * En_Ct * En_Ce * fatorDeRisco;
-    const Ni_en = NgAtual * Ai_en * En_Ci * En_Ct * En_Ce * fatorDeRisco;
+    let Nl_en = NgAtual * Al_en * En_Ci * En_Ct * En_Ce * fatorDeRisco;
+    let Ni_en = NgAtual * Ai_en * En_Ci * En_Ct * En_Ce * fatorDeRisco;
 
     const Al_si = 40 * Si_LL, Ai_si = 4000 * Si_LL;
-    const Nl_si = NgAtual * Al_si * Si_Ci * Si_Ct * Si_Ce * fatorDeRisco;
-    const Ni_si = NgAtual * Ai_si * Si_Ci * Si_Ct * Si_Ce * fatorDeRisco;
+    let Nl_si = NgAtual * Al_si * Si_Ci * Si_Ct * Si_Ce * fatorDeRisco;
+    let Ni_si = NgAtual * Ai_si * Si_Ci * Si_Ct * Si_Ce * fatorDeRisco;
+
+    if (!document.getElementById('rua-energia')?.checked) { Nl_en = 0; Ni_en = 0; }
+    if (!document.getElementById('rua-sinal')?.checked)   { Nl_si = 0; Ni_si = 0; }
 
     // Output Anexo A
     const formata = num => num.toLocaleString('pt-BR', { minimumFractionDigits: 5, maximumFractionDigits: 5 });
