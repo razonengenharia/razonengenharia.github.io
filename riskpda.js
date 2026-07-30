@@ -299,130 +299,133 @@ function adicionarZona() {
             ${numero > 1 ? `<button onclick="removerZona(${id})" class="text-red-500 hover:text-red-700 text-sm font-bold bg-white px-3 py-1 rounded shadow-sm border border-red-200"><i class="fas fa-trash"></i> Excluir</button>` : ''}
         </div>
 
-        <div class="p-6 grid md:grid-cols-4 gap-6">
-            <!-- Anexo B: Estrutura / Zona -->
-            <div class="space-y-4">
-                <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-shield-alt text-razon-copper mr-1"></i>Proteção Física da Zona</h3>
+        <div class="p-6">
 
-                ${campoTip('Contra choque (PTA)', TIPS_B.pta,
-                    `<select id="pta-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTA}</select>`)}
+            <!-- Linha 1: Anexo B — 3 colunas iguais -->
+            <div class="grid md:grid-cols-3 gap-6">
 
-                ${campoTip('Nível do SPDA (PB)', TIPS_B.pb,
-                    `<select id="pb-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPB}</select>`)}
-
-                ${campoTip('DPS Coordenado (PSPD)', TIPS_B.pspd,
-                    `<select id="pspd-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPSPD}</select>`)}
-
-                <div class="grid grid-cols-2 gap-2">
-                    ${campoTip('Wm1 (m)', TIPS_B.wm1,
-                        `<input type="number" id="wm1-${id}" value="0" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
-                    ${campoTip('Wm2 (m)', TIPS_B.wm2,
-                        `<input type="number" id="wm2-${id}" value="0" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                <!-- Proteção Física da Zona -->
+                <div class="space-y-4">
+                    <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-shield-alt text-razon-copper mr-1"></i>Proteção Física da Zona</h3>
+                    ${campoTip('Contra choque (PTA)', TIPS_B.pta,
+                        `<select id="pta-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTA}</select>`)}
+                    ${campoTip('Nível do SPDA (PB)', TIPS_B.pb,
+                        `<select id="pb-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPB}</select>`)}
+                    ${campoTip('DPS Coordenado (PSPD)', TIPS_B.pspd,
+                        `<select id="pspd-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPSPD}</select>`)}
+                    <div class="grid grid-cols-2 gap-2">
+                        ${campoTip('Wm1 (m)', TIPS_B.wm1,
+                            `<input type="number" id="wm1-${id}" value="0" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                        ${campoTip('Wm2 (m)', TIPS_B.wm2,
+                            `<input type="number" id="wm2-${id}" value="0" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                    </div>
+                    ${campoTip('Fiação Interna (KS3)', TIPS_B.ks3,
+                        `<select id="ks3-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optKS3}</select>`)}
                 </div>
 
-                ${campoTip('Fiação Interna (KS3)', TIPS_B.ks3,
-                    `<select id="ks3-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optKS3}</select>`)}
-            </div>
-
-            <!-- Anexo B: Energia -->
-            <div class="space-y-4 border-l pl-4 border-slate-100">
-                <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-bolt text-razon-copper mr-1"></i>Linha de Energia</h3>
-
-                ${campoTip('Medida choque (PTU)', TIPS_B.ptu,
-                    `<select id="ptu-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTU}</select>`)}
-
-                ${campoTip('DPS na linha (PEB)', TIPS_B.peb,
-                    `<select id="peb-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPEB}</select>`)}
-
-                ${campoTip('Blindagem (CLD/CLI)', TIPS_B.cld,
-                    `<select id="cld-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select>`)}
-
-                ${campoTip('Uw (kV) — fixo', TIPS_B.uw,
-                    `<input type="number" id="uw-en-${id}" value="2.5" class="w-full p-2 border border-slate-200 rounded text-xs bg-slate-100 text-slate-500 cursor-not-allowed" readonly>`)}
-                ${campoTip('PLD (Tab. B.8)', TIPS_B.pld,
-                    `<select id="pld-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLD_en}</select>`)}
-                ${campoTip('PLI (Tab. B.9)', TIPS_B.pli,
-                    `<select id="pli-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLI_en}</select>`)}
-            </div>
-
-            <!-- Anexo B: Sinal -->
-            <div class="space-y-4 border-l pl-4 border-slate-100">
-                <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-network-wired text-razon-copper mr-1"></i>Linha de Sinal</h3>
-
-                ${campoTip('Medida choque (PTU)', TIPS_B.ptu,
-                    `<select id="ptu-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTU}</select>`)}
-
-                ${campoTip('DPS na linha (PEB)', TIPS_B.peb,
-                    `<select id="peb-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPEB}</select>`)}
-
-                ${campoTip('Blindagem (CLD/CLI)', TIPS_B.cld,
-                    `<select id="cld-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select>`)}
-
-                ${campoTip('Uw (kV) — fixo', TIPS_B.uw,
-                    `<input type="number" id="uw-si-${id}" value="1.5" class="w-full p-2 border border-slate-200 rounded text-xs bg-slate-100 text-slate-500 cursor-not-allowed" readonly>`)}
-                ${campoTip('PLD (Tab. B.8)', TIPS_B.pld,
-                    `<select id="pld-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLD_si}</select>`)}
-                ${campoTip('PLI (Tab. B.9)', TIPS_B.pli,
-                    `<select id="pli-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLI_si}</select>`)}
-            </div>
-
-            <!-- Anexo C: Fatores de Perda (ativo) -->
-            <div class="space-y-3 border-l pl-4 border-amber-200 bg-amber-50/40 rounded-r-xl p-3">
-                <h3 class="font-bold text-amber-700 border-b border-amber-200 pb-1 text-sm"><i class="fas fa-chart-bar text-amber-600 mr-1"></i>Perdas e Riscos (Anexo C)</h3>
-
-                <div class="grid grid-cols-2 gap-2">
-                    ${campoTip('Pes. Zona (nz)', TIPS_C.nz,
-                        `<input type="number" id="nz-${id}" value="10" min="1" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
-                    ${campoTip('Pes. Total (nt)', TIPS_C.nt,
-                        `<input type="number" id="nt-${id}" value="10" min="1" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
+                <!-- Linha de Energia -->
+                <div class="space-y-4 border-l pl-4 border-slate-100">
+                    <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-bolt text-razon-copper mr-1"></i>Linha de Energia</h3>
+                    ${campoTip('Medida choque (PTU)', TIPS_B.ptu,
+                        `<select id="ptu-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTU}</select>`)}
+                    ${campoTip('DPS na linha (PEB)', TIPS_B.peb,
+                        `<select id="peb-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPEB}</select>`)}
+                    ${campoTip('Blindagem (CLD/CLI)', TIPS_B.cld,
+                        `<select id="cld-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select>`)}
+                    ${campoTip('Uw (kV) — fixo', TIPS_B.uw,
+                        `<input type="number" id="uw-en-${id}" value="2.5" class="w-full p-2 border border-slate-200 rounded text-xs bg-slate-100 text-slate-500 cursor-not-allowed" readonly>`)}
+                    ${campoTip('PLD (Tab. B.8)', TIPS_B.pld,
+                        `<select id="pld-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLD_en}</select>`)}
+                    ${campoTip('PLI (Tab. B.9)', TIPS_B.pli,
+                        `<select id="pli-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLI_en}</select>`)}
                 </div>
 
-                ${campoTip('Tempo tz (h/ano)', TIPS_C.tz,
-                    `<input type="number" id="tz-${id}" value="8760" min="1" max="8760" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
-
-                ${campoTip('Estrutura (rs, Tab. C.7)', TIPS_C.rs,
-                    `<select id="rs-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRS}</select>`)}
-
-                <div class="border-t border-amber-200/80 pt-2">
-                    <p class="text-[9px] text-amber-700 font-semibold uppercase mb-1.5 tracking-wide">Fatores da Zona</p>
-                    ${campoTip('Piso/Solo (rt, Tab. C.3)', TIPS_C.rt,
-                        `<select id="rt-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRT}</select>`)}
-                    ${campoTip('Contra fogo (rp, Tab. C.4)', TIPS_C.rp,
-                        `<select id="rp-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRP}</select>`)}
-                    ${campoTip('Risco incêndio (rf, Tab. C.5)', TIPS_C.rf,
-                        `<select id="rf-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRF}</select>`)}
-                    ${campoTip('Perigo especial (hz, Tab. C.6)', TIPS_C.hz,
-                        `<select id="hz-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optHZ}</select>`)}
+                <!-- Linha de Sinal -->
+                <div class="space-y-4 border-l pl-4 border-slate-100">
+                    <h3 class="font-bold text-razon-dark border-b pb-1 text-sm"><i class="fas fa-network-wired text-razon-copper mr-1"></i>Linha de Sinal</h3>
+                    ${campoTip('Medida choque (PTU)', TIPS_B.ptu,
+                        `<select id="ptu-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPTU}</select>`)}
+                    ${campoTip('DPS na linha (PEB)', TIPS_B.peb,
+                        `<select id="peb-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPEB}</select>`)}
+                    ${campoTip('Blindagem (CLD/CLI)', TIPS_B.cld,
+                        `<select id="cld-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select>`)}
+                    ${campoTip('Uw (kV) — fixo', TIPS_B.uw,
+                        `<input type="number" id="uw-si-${id}" value="1.5" class="w-full p-2 border border-slate-200 rounded text-xs bg-slate-100 text-slate-500 cursor-not-allowed" readonly>`)}
+                    ${campoTip('PLD (Tab. B.8)', TIPS_B.pld,
+                        `<select id="pld-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLD_si}</select>`)}
+                    ${campoTip('PLI (Tab. B.9)', TIPS_B.pli,
+                        `<select id="pli-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPLI_si}</select>`)}
                 </div>
 
-                <div class="border-t border-amber-200/80 pt-2 space-y-2">
-                    <p class="text-[9px] text-amber-700 font-semibold uppercase tracking-wide">Valores de Perda</p>
+            </div><!-- /grid 3 cols -->
 
-                    <div class="rounded-lg border border-amber-100 bg-white/70 p-2 space-y-2">
-                        <p class="text-[9px] text-slate-400 font-semibold uppercase tracking-wide">R1 — Vidas (Tab. C.2)</p>
+            <!-- Linha 2: Anexo C — faixa horizontal completa -->
+            <div class="mt-5 pt-4 border-t border-amber-200/60 bg-amber-50/30 rounded-xl px-4 pb-4">
+                <h3 class="font-bold text-amber-700 pb-2 mb-3 text-sm border-b border-amber-200">
+                    <i class="fas fa-chart-bar text-amber-600 mr-1"></i>Perdas e Riscos (Anexo C)
+                </h3>
+
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+
+                    <!-- Col 1: Pessoas e exposição -->
+                    <div class="space-y-3">
+                        <p class="text-[9px] text-amber-700 font-semibold uppercase tracking-wide">Ocupação</p>
+                        ${campoTip('Pes. Zona (nz)', TIPS_C.nz,
+                            `<input type="number" id="nz-${id}" value="10" min="1" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
+                        ${campoTip('Pes. Total (nt)', TIPS_C.nt,
+                            `<input type="number" id="nt-${id}" value="10" min="1" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
+                        ${campoTip('Tempo tz (h/ano)', TIPS_C.tz,
+                            `<input type="number" id="tz-${id}" value="8760" min="1" max="8760" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
+                        ${campoTip('Estrutura (rs, C.7)', TIPS_C.rs,
+                            `<select id="rs-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRS}</select>`)}
+                    </div>
+
+                    <!-- Col 2: Fatores de zona -->
+                    <div class="space-y-3">
+                        <p class="text-[9px] text-amber-700 font-semibold uppercase tracking-wide">Fatores da Zona</p>
+                        ${campoTip('Piso/Solo (rt, C.3)', TIPS_C.rt,
+                            `<select id="rt-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRT}</select>`)}
+                        ${campoTip('Contra fogo (rp, C.4)', TIPS_C.rp,
+                            `<select id="rp-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRP}</select>`)}
+                        ${campoTip('Risco incêndio (rf, C.5)', TIPS_C.rf,
+                            `<select id="rf-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRF}</select>`)}
+                        ${campoTip('Perigo especial (hz, C.6)', TIPS_C.hz,
+                            `<select id="hz-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optHZ}</select>`)}
+                    </div>
+
+                    <!-- Col 3: Perdas R1 -->
+                    <div class="space-y-3">
+                        <p class="text-[9px] text-amber-700 font-semibold uppercase tracking-wide">Perdas R1 — Vidas</p>
+                        <p class="text-[9px] text-slate-400 -mt-2">(Tab. C.2)</p>
                         ${campoTip('LF — danos físicos / incêndio', TIPS_C.lf_r1,
-                            `<select id="lf-r1-${id}" class="w-full p-1.5 bg-white border border-amber-200 rounded text-[10px]" onchange="calcularRiscos()">${optLF_C2}</select>`)}
+                            `<select id="lf-r1-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optLF_C2}</select>`)}
                         ${campoTip('LO — falha de sistemas', TIPS_C.lo_r1,
-                            `<select id="lo-r1-${id}" class="w-full p-1.5 bg-white border border-amber-200 rounded text-[10px]" onchange="calcularRiscos()">${optLO_C2}</select>`)}
+                            `<select id="lo-r1-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optLO_C2}</select>`)}
                     </div>
 
-                    <div class="rounded-lg border border-emerald-100 bg-white/70 p-2 space-y-2">
-                        <p class="text-[9px] text-slate-400 font-semibold uppercase tracking-wide">R4 — Econômico (Tab. D.2)</p>
+                    <!-- Col 4: Perdas R4 -->
+                    <div class="space-y-3">
+                        <p class="text-[9px] text-emerald-700 font-semibold uppercase tracking-wide">Perdas R4 — Econôm.</p>
+                        <p class="text-[9px] text-slate-400 -mt-2">(Tab. D.2)</p>
                         ${campoTip('LF — danos físicos / incêndio', TIPS_C.lf_r4,
-                            `<select id="lf-r4-${id}" class="w-full p-1.5 bg-white border border-emerald-200 rounded text-[10px]" onchange="calcularRiscos()">${optLF_D2}</select>`)}
+                            `<select id="lf-r4-${id}" class="w-full p-2 bg-white border border-emerald-200 rounded text-[11px]" onchange="calcularRiscos()">${optLF_D2}</select>`)}
                         ${campoTip('LO — falha de sistemas', TIPS_C.lo_r4,
-                            `<select id="lo-r4-${id}" class="w-full p-1.5 bg-white border border-emerald-200 rounded text-[10px]" onchange="calcularRiscos()">${optLO_D2}</select>`)}
+                            `<select id="lo-r4-${id}" class="w-full p-2 bg-white border border-emerald-200 rounded text-[11px]" onchange="calcularRiscos()">${optLO_D2}</select>`)}
                     </div>
-                </div>
 
-                <div class="border-t border-amber-200/80 pt-2">
-                    ${campoTip('Roteamento das linhas', TIPS_C.roteamento,
-                        `<label class="flex items-center gap-2 cursor-pointer mt-1">
-                            <input type="checkbox" id="roteamento-${id}" class="accent-amber-600 w-4 h-4" onchange="calcularRiscos()">
-                            <span class="text-[10px] text-slate-700 leading-tight">Mesmo roteamento<br><span class="text-slate-400 text-[9px]">(usa apenas a pior linha)</span></span>
-                        </label>`)}
+                    <!-- Col 5: Roteamento -->
+                    <div class="space-y-3">
+                        <p class="text-[9px] text-slate-500 font-semibold uppercase tracking-wide">Roteamento</p>
+                        ${campoTip('Roteamento das linhas', TIPS_C.roteamento,
+                            `<label class="flex items-start gap-2 cursor-pointer mt-1 p-3 bg-white border border-amber-200 rounded-lg">
+                                <input type="checkbox" id="roteamento-${id}" class="accent-amber-600 w-4 h-4 mt-0.5 shrink-0" onchange="calcularRiscos()">
+                                <span class="text-[10px] text-slate-700 leading-snug">Mesmo roteamento<br><span class="text-slate-400 text-[9px]">usa apenas a pior linha (NBR 6.4.5)</span></span>
+                            </label>`)}
+                    </div>
+
                 </div>
-            </div>
+            </div><!-- /anexo C -->
+
         </div>
 
         <div class="bg-razon-dark rounded-b-2xl p-4 text-white text-xs font-mono">
