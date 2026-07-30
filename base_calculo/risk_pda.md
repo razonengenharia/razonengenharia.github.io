@@ -55,7 +55,9 @@ let NgAtual   = 0;    // Ng do município selecionado
 ```
 
 Cada zona no array possui:
-- Inputs (ids dinâmicos): `pta-{id}`, `pb-{id}`, `pspd-{id}`, `wm1-{id}`, `wm2-{id}`, `ks3-{id}`, e por linha (`en`/`si`): `uw-{prefixo}-{id}`, `cld-{prefixo}-{id}`, `ptu-{prefixo}-{id}`, `peb-{prefixo}-{id}`, `pld-{prefixo}-{id}`, `pli-{prefixo}-{id}`, e do Anexo C: `nz-{id}`, `nt-{id}`, `tz-{id}`, `rs-{id}`, `rt-{id}`, `rp-{id}`, `rf-{id}`, `hz-{id}`, `lf-r1-{id}`, `lo-r1-{id}`, `lf-r4-{id}`, `lo-r4-{id}`, `roteamento-{id}`.
+- Inputs (ids dinâmicos): `pta-{id}`, `pb-{id}`, `pspd-{id}`, `wm1-{id}`, `wm2-{id}`, `ks3-{id}`, e por linha (`en`/`si`): `uw-{prefixo}-{id}`, `cld-{prefixo}-{id}`, `ptu-{prefixo}-{id}`, `peb-{prefixo}-{id}`, `pld-{prefixo}-{id}`, `pli-{prefixo}-{id}`, e do Anexo C: `nz-{id}`, `tz-{id}`, `rs-{id}`, `rt-{id}`, `rp-{id}`, `rf-{id}`, `hz-{id}`, `lf-r1-{id}`, `lo-r1-{id}`, `lf-r4-{id}`, `lo-r4-{id}`, `roteamento-{id}`.
+- `nt` é **global** (id `nt-global`, na seção de dados da edificação) — não pertence a cada zona.
+- `nome-zona-{id}`: campo de texto editável no cabeçalho de cada zona (maxlength=40), exibido como `Zona X: [nome]`.
 - `.anexoB_resultado`: `{ PA, PB, PSPD, energia: { PM, PC, PU, PV, PW, PZ }, sinal: { PM, PC, PU, PV, PW, PZ } }`
 - `.anexoC_resultado`: `{ R1, F, R4 }`
 
@@ -271,6 +273,21 @@ A seleção de FT para F (crítico ou não crítico) é feita pelo usuário dire
 ### Roteamento das Linhas (item 6.4.5)
 - **Mesmo roteamento**: usar somente a linha de pior característica (geralmente sinal, por ter menor Uw e CT=1 sem atenuação de transformador). Não somar.
 - **Roteamentos diferentes**: calcular os componentes independentemente para cada linha e somar.
+
+### Nomeação de Zonas
+- O cabeçalho de cada zona exibe `Zona X:` seguido de um input de texto editável (`nome-zona-{id}`, maxlength=40).
+- Valor padrão ao criar: `"Zona de Estudo {numero}"`. Sem validação obrigatória — campo opcional para o engenheiro nomear como desejar.
+
+### CLD → PLD — travamento automático (Tabela B.8)
+- Quando `CLD = 1` (não blindada), `PLD` é travado em `1` e o select fica desabilitado (`disabled`, visual opacified). Isso reflete a Tabela B.8 da norma, onde a linha "não blindada" (RS → ∞) resulta em PLD = 1 para qualquer Uw.
+- Implementado pela função `sincronizarCLD(cldEl, id, prefixo)` chamada no `onchange` dos selects de CLD.
+- Quando CLD ≠ 1 (blindada ou duto), PLD fica livre.
+
+### nt — campo global (Fator de pessoas)
+- `nt` (total de pessoas na edificação) é **global**, na seção de dados gerais ao lado de L/W/H/Ng.
+- Cada zona mantém `nz` (pessoas naquela zona).
+- `calcularRiscos()` lê `nt` de `#nt-global`. O fator de pessoas por zona é `(nz/nt) × (tz/8760)`.
+- Validação em tempo real: a soma dos `nz` é exibida ao lado de `nt`; se divergir, alerta visual `≠ nt — revise a distribuição por zona`.
 
 ### Uw e as linhas de energia vs. sinal
 - **Energia (BT)**: Uw = 2,5 kV (categoria III, Tab. 31 da NBR 5410).

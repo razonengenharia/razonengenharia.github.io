@@ -296,8 +296,9 @@ function adicionarZona() {
     div.innerHTML = `
         <div class="bg-slate-100 rounded-t-2xl px-6 py-4 border-b border-slate-200 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <span class="bg-razon-dark text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">${numero}</span>
-                <input type="text" id="nome-zona-${id}" value="Zona de Estudo ${numero}" class="font-bold text-lg text-razon-dark bg-transparent border-b border-dashed border-slate-400 focus:outline-none focus:border-razon-copper">
+                <span class="bg-razon-dark text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm shrink-0">${numero}</span>
+                <span class="font-bold text-lg text-razon-dark shrink-0">Zona ${numero}:</span>
+                <input type="text" id="nome-zona-${id}" maxlength="40" placeholder="Nome da zona (ex: Sala de Servidores)" class="font-bold text-lg text-razon-dark bg-transparent border-b border-dashed border-slate-400 focus:outline-none focus:border-razon-copper w-72 placeholder:font-normal placeholder:text-slate-400 placeholder:text-sm">
             </div>
             ${numero > 1 ? `<button onclick="removerZona(${id})" class="text-red-500 hover:text-red-700 text-sm font-bold bg-white px-3 py-1 rounded shadow-sm border border-red-200"><i class="fas fa-trash"></i> Excluir</button>` : ''}
         </div>
@@ -334,7 +335,7 @@ function adicionarZona() {
                     ${campoTip('DPS na linha (PEB)', TIPS_B.peb,
                         `<select id="peb-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPEB}</select>`)}
                     ${campoTip('Blindagem (CLD/CLI)', TIPS_B.cld,
-                        `<select id="cld-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select>`)}
+                        `<select id="cld-en-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="sincronizarCLD(this,'${id}','en'); calcularRiscos()">${optCLD}</select>`)}
                     ${campoTip('Uw (kV) — fixo', TIPS_B.uw,
                         `<input type="number" id="uw-en-${id}" value="2.5" class="w-full p-2 border border-slate-200 rounded text-xs bg-slate-100 text-slate-500 cursor-not-allowed" readonly>`)}
                     ${campoTip('PLD (Tab. B.8)', TIPS_B.pld,
@@ -351,7 +352,7 @@ function adicionarZona() {
                     ${campoTip('DPS na linha (PEB)', TIPS_B.peb,
                         `<select id="peb-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPEB}</select>`)}
                     ${campoTip('Blindagem (CLD/CLI)', TIPS_B.cld,
-                        `<select id="cld-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optCLD}</select>`)}
+                        `<select id="cld-si-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="sincronizarCLD(this,'${id}','si'); calcularRiscos()">${optCLD}</select>`)}
                     ${campoTip('Uw (kV) — fixo', TIPS_B.uw,
                         `<input type="number" id="uw-si-${id}" value="1.5" class="w-full p-2 border border-slate-200 rounded text-xs bg-slate-100 text-slate-500 cursor-not-allowed" readonly>`)}
                     ${campoTip('PLD (Tab. B.8)', TIPS_B.pld,
@@ -373,10 +374,8 @@ function adicionarZona() {
                     <!-- Col 1: Pessoas e exposição -->
                     <div class="space-y-3">
                         <p class="text-[9px] text-amber-700 font-semibold uppercase tracking-wide">Ocupação</p>
-                        ${campoTip('Pes. Zona (nz)', TIPS_C.nz,
+                        ${campoTip('Pes. nesta zona (nz)', TIPS_C.nz,
                             `<input type="number" id="nz-${id}" value="10" min="1" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
-                        ${campoTip('Pes. Total (nt)', TIPS_C.nt,
-                            `<input type="number" id="nt-${id}" value="10" min="1" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
                         ${campoTip('Tempo tz (h/ano)', TIPS_C.tz,
                             `<input type="number" id="tz-${id}" value="8760" min="1" max="8760" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
                         ${campoTip('Estrutura (rs, C.7)', TIPS_C.rs,
@@ -659,7 +658,7 @@ function calcularRiscos() {
         // 3. CÁLCULOS DO ANEXO C — Perdas e Riscos R1, F, R4
         // ---------------------------------------------------------
         const nz  = Math.max(parseFloat(document.getElementById(`nz-${id}`).value) || 1, 1);
-        const nt  = Math.max(parseFloat(document.getElementById(`nt-${id}`).value) || nz, nz);
+        const nt  = Math.max(parseFloat(document.getElementById('nt-global').value) || 1, 1);
         const tz  = Math.min(parseFloat(document.getElementById(`tz-${id}`).value) || 8760, 8760);
         const rs  = parseFloat(document.getElementById(`rs-${id}`).value)  || 1;
         const rt  = parseFloat(document.getElementById(`rt-${id}`).value)  || 0.01;
@@ -789,8 +788,37 @@ function calcularRiscos() {
         }
     }
 
+    // Atualiza indicador de soma dos nz vs nt
+    const nt_global = Math.max(parseFloat(document.getElementById('nt-global')?.value) || 1, 1);
+    const somaDisplay = document.getElementById('nz-soma-display');
+    const somaAlerta  = document.getElementById('nz-soma-alerta');
+    if (somaDisplay) {
+        const somaNz = AnaliseRisco.zonas.reduce((acc, z) => {
+            const el = document.getElementById(`nz-${z.id}`);
+            return acc + (el ? Math.max(parseFloat(el.value) || 0, 0) : 0);
+        }, 0);
+        somaDisplay.textContent = somaNz;
+        const difere = somaNz !== nt_global;
+        somaDisplay.className = `font-bold ${difere ? 'text-red-500' : 'text-emerald-600'}`;
+        if (somaAlerta) somaAlerta.classList.toggle('hidden', !difere);
+    }
+
     // Roda o simulador de R$ caso o usuário já tenha preenchido o campo
     calcularPerdaR4();
+}
+
+function sincronizarCLD(cldEl, id, prefixo) {
+    const pldEl = document.getElementById(`pld-${prefixo}-${id}`);
+    if (!pldEl) return;
+    const naoBlindada = parseFloat(cldEl.value) === 1;
+    if (naoBlindada) {
+        pldEl.value = '1';
+        pldEl.disabled = true;
+        pldEl.classList.add('opacity-50', 'cursor-not-allowed', 'bg-slate-100');
+    } else {
+        pldEl.disabled = false;
+        pldEl.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-slate-100');
+    }
 }
 
 function calcularPerdaR4() {
