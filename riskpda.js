@@ -535,6 +535,10 @@ function adicionarZona() {
     // Injeta a div no HTML sem usar innerHTML+=, preservando as outras zonas
     container.appendChild(div);
 
+    // Aplica travamento inicial do PLD com base no estado padrão do CLD (já começa em "não blindada")
+    sincronizarCLD(document.getElementById(`cld-en-${id}`), id, 'en');
+    sincronizarCLD(document.getElementById(`cld-si-${id}`), id, 'si');
+
     if (AnaliseRisco.zonas.length >= 4) {
         document.getElementById('btn-add-zona').classList.add('hidden');
     }
