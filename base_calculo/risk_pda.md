@@ -275,8 +275,9 @@ A seleção de FT para F (crítico ou não crítico) é feita pelo usuário dire
 - **Roteamentos diferentes**: calcular os componentes independentemente para cada linha e somar.
 
 ### Nomeação de Zonas
-- O cabeçalho de cada zona exibe `Zona X:` seguido de um input de texto editável (`nome-zona-{id}`, maxlength=40).
-- Valor padrão ao criar: `"Zona de Estudo {numero}"`. Sem validação obrigatória — campo opcional para o engenheiro nomear como desejar.
+- O cabeçalho de cada zona exibe o título fixo **"Zona N"** (negrito, não editável) e, abaixo dele, um input de texto secundário (`nome-zona-{id}`, maxlength=40, placeholder `"Clique para nomear esta zona…"`).
+- O título fixo deixa clara a numeração; o campo de nome é opcional e serve para identificação descritiva (ex.: "Sala de Servidores") — usado pelo futuro módulo de relatório.
+- Sem valor padrão — campo inicia vazio.
 
 ### CLD → PLD — travamento automático (Tabela B.8)
 - Quando `CLD = 1` (não blindada), `PLD` é travado em `1` e o select fica desabilitado (`disabled`, visual opacified). Isso reflete a Tabela B.8 da norma, onde a linha "não blindada" (RS → ∞) resulta em PLD = 1 para qualquer Uw.
