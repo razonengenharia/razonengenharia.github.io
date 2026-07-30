@@ -295,10 +295,15 @@ function adicionarZona() {
 
     div.innerHTML = `
         <div class="bg-slate-100 rounded-t-2xl px-6 py-4 border-b border-slate-200 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <span class="bg-razon-dark text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm shrink-0">${numero}</span>
-                <span class="font-bold text-lg text-razon-dark shrink-0">Zona ${numero}:</span>
-                <input type="text" id="nome-zona-${id}" maxlength="40" placeholder="Nome da zona (ex: Sala de Servidores)" class="font-bold text-lg text-razon-dark bg-transparent border-b border-dashed border-slate-400 focus:outline-none focus:border-razon-copper w-72 placeholder:font-normal placeholder:text-slate-400 placeholder:text-sm">
+            <div class="flex items-center gap-4">
+                <span class="bg-razon-dark text-white rounded-full w-9 h-9 flex items-center justify-center font-bold text-base shrink-0">${numero}</span>
+                <div>
+                    <p class="font-bold text-lg text-razon-dark leading-tight">Zona ${numero}</p>
+                    <div class="flex items-center gap-1 mt-0.5">
+                        <i class="fas fa-tag text-[10px] text-slate-400"></i>
+                        <input type="text" id="nome-zona-${id}" maxlength="40" placeholder="Clique para nomear esta zona…" class="text-sm text-slate-600 bg-transparent border-b border-dashed border-slate-300 focus:outline-none focus:border-razon-copper w-64 placeholder:text-slate-400">
+                    </div>
+                </div>
             </div>
             ${numero > 1 ? `<button onclick="removerZona(${id})" class="text-red-500 hover:text-red-700 text-sm font-bold bg-white px-3 py-1 rounded shadow-sm border border-red-200"><i class="fas fa-trash"></i> Excluir</button>` : ''}
         </div>
