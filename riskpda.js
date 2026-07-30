@@ -233,6 +233,30 @@ const TIPS_C = {
     roteamento: "NBR 5419-2 item 6.4.5 — Com mesmo roteamento, calcule apenas a pior linha (geralmente sinal — menor Uw, maior CT). Com roteamentos diferentes, some as contribuições de cada linha."
 };
 
+// Textos de ajuda para os resultados calculados (painel escuro)
+const TIPS_RES = {
+    pm: "Raio cai <b>próximo ao prédio</b> → LEMP induzido → falha de equipamentos internos.",
+    pc: "Raio cai <b>na própria estrutura</b> → centelhamento interno → falha de equipamentos.",
+    pu: "Raio atinge <b>diretamente a fiação externa</b> → choque elétrico em pessoas.",
+    pv: "Raio atinge <b>diretamente a fiação externa</b> → incêndio ou explosão.",
+    pw: "Raio atinge <b>diretamente a fiação externa</b> → surto conduzido → falha de equipamentos.",
+    pz: "Raio cai <b>perto da fiação externa</b> → indução eletromagnética → falha de equipamentos.",
+    la_lu: "<b>LA = LU</b> — A perda por choque elétrico é a mesma, seja o raio na estrutura (LA·S1) ou na linha (LU·S3).",
+    lb_lv: "<b>LB = LV</b> — A perda por danos físicos (fogo/explosão) é idêntica para impacto na estrutura ou na linha.",
+    lc_lz: "<b>LC = LM = LW = LZ</b> — A perda por falha de sistemas é igual, independente de onde o raio cai: na estrutura, perto dela, na linha ou perto da linha."
+};
+
+// Gera ícone de tooltip para uso nos labels dos resultados (painel escuro → tooltip branco)
+function tipRes(texto) {
+    return `<span class="has-tooltip relative inline-flex cursor-help align-middle ml-0.5">
+        <i class="fas fa-circle-info text-slate-600 hover:text-slate-300 text-[8px] transition"></i>
+        <div class="tooltip-box absolute z-40 bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-white text-slate-700 text-[10px] leading-snug p-2.5 rounded-lg shadow-xl normal-case font-normal">
+            ${texto}
+            <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white"></div>
+        </div>
+    </span>`;
+}
+
 // Formata probabilidades: usa notação científica quando o valor é muito pequeno
 function formatProb(v) {
     if (!isFinite(v)) return '0.0000';
@@ -447,23 +471,23 @@ function adicionarZona() {
                 <div>
                     <p class="text-[10px] text-amber-400/90 font-bold uppercase mb-1"><i class="fas fa-bolt mr-1"></i>Linha de Energia</p>
                     <div class="grid grid-cols-3 gap-x-2 gap-y-1 text-center bg-slate-800/60 rounded-lg p-2 border border-slate-700/50">
-                        <div><p class="text-[9px] text-slate-400">PM</p><span id="out-pm-en-${id}" class="font-bold">0.0000</span></div>
-                        <div><p class="text-[9px] text-slate-400">PC</p><span id="out-pc-en-${id}" class="font-bold">0.0000</span></div>
-                        <div><p class="text-[9px] text-slate-400">PU</p><span id="out-pu-en-${id}" class="text-blue-300 font-bold">0.0000</span></div>
-                        <div><p class="text-[9px] text-slate-400">PV</p><span id="out-pv-en-${id}" class="text-blue-300 font-bold">0.0000</span></div>
-                        <div><p class="text-[9px] text-slate-400">PW</p><span id="out-pw-en-${id}" class="font-bold">0.0000</span></div>
-                        <div><p class="text-[9px] text-slate-400">PZ</p><span id="out-pz-en-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PM${tipRes(TIPS_RES.pm)}</p><span id="out-pm-en-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PC${tipRes(TIPS_RES.pc)}</p><span id="out-pc-en-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PU${tipRes(TIPS_RES.pu)}</p><span id="out-pu-en-${id}" class="text-blue-300 font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PV${tipRes(TIPS_RES.pv)}</p><span id="out-pv-en-${id}" class="text-blue-300 font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PW${tipRes(TIPS_RES.pw)}</p><span id="out-pw-en-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PZ${tipRes(TIPS_RES.pz)}</p><span id="out-pz-en-${id}" class="font-bold">0.0000</span></div>
                     </div>
                 </div>
                 <div>
                     <p class="text-[10px] text-sky-300/90 font-bold uppercase mb-1"><i class="fas fa-network-wired mr-1"></i>Linha de Sinal</p>
                     <div class="grid grid-cols-3 gap-x-2 gap-y-1 text-center bg-slate-800/60 rounded-lg p-2 border border-slate-700/50">
-                        <div><p class="text-[9px] text-slate-400">PM</p><span id="out-pm-si-${id}" class="font-bold">0.0000</span></div>
-                        <div><p class="text-[9px] text-slate-400">PC</p><span id="out-pc-si-${id}" class="font-bold">0.0000</span></div>
-                        <div><p class="text-[9px] text-slate-400">PU</p><span id="out-pu-si-${id}" class="text-blue-300 font-bold">0.0000</span></div>
-                        <div><p class="text-[9px] text-slate-400">PV</p><span id="out-pv-si-${id}" class="text-blue-300 font-bold">0.0000</span></div>
-                        <div><p class="text-[9px] text-slate-400">PW</p><span id="out-pw-si-${id}" class="font-bold">0.0000</span></div>
-                        <div><p class="text-[9px] text-slate-400">PZ</p><span id="out-pz-si-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PM${tipRes(TIPS_RES.pm)}</p><span id="out-pm-si-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PC${tipRes(TIPS_RES.pc)}</p><span id="out-pc-si-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PU${tipRes(TIPS_RES.pu)}</p><span id="out-pu-si-${id}" class="text-blue-300 font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PV${tipRes(TIPS_RES.pv)}</p><span id="out-pv-si-${id}" class="text-blue-300 font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PW${tipRes(TIPS_RES.pw)}</p><span id="out-pw-si-${id}" class="font-bold">0.0000</span></div>
+                        <div><p class="text-[9px] text-slate-400 flex items-center justify-center gap-0.5">PZ${tipRes(TIPS_RES.pz)}</p><span id="out-pz-si-${id}" class="font-bold">0.0000</span></div>
                     </div>
                 </div>
             </div>
@@ -476,15 +500,15 @@ function adicionarZona() {
                 </div>
                 <div class="grid grid-cols-3 gap-2 mb-2 text-center">
                     <div class="bg-slate-800/60 p-2 rounded-lg border border-slate-700/50">
-                        <p class="text-[9px] text-slate-400 mb-0.5">LA = LU</p>
+                        <p class="text-[9px] text-slate-400 mb-0.5 flex items-center justify-center gap-0.5">LA = LU${tipRes(TIPS_RES.la_lu)}</p>
                         <span id="out-la-${id}" class="text-[11px] font-bold text-green-400">—</span>
                     </div>
                     <div class="bg-slate-800/60 p-2 rounded-lg border border-slate-700/50">
-                        <p class="text-[9px] text-slate-400 mb-0.5">LB = LV</p>
+                        <p class="text-[9px] text-slate-400 mb-0.5 flex items-center justify-center gap-0.5">LB = LV${tipRes(TIPS_RES.lb_lv)}</p>
                         <span id="out-lb-${id}" class="text-[11px] font-bold text-amber-400">—</span>
                     </div>
                     <div class="bg-slate-800/60 p-2 rounded-lg border border-slate-700/50">
-                        <p class="text-[9px] text-slate-400 mb-0.5">LC – LZ</p>
+                        <p class="text-[9px] text-slate-400 mb-0.5 flex items-center justify-center gap-0.5">LC = LM = LW = LZ${tipRes(TIPS_RES.lc_lz)}</p>
                         <span id="out-lc-${id}" class="text-[11px] font-bold text-slate-300">—</span>
                     </div>
                 </div>

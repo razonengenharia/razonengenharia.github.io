@@ -274,6 +274,23 @@ A seleção de FT para F (crítico ou não crítico) é feita pelo usuário dire
 - **Mesmo roteamento**: usar somente a linha de pior característica (geralmente sinal, por ter menor Uw e CT=1 sem atenuação de transformador). Não somar.
 - **Roteamentos diferentes**: calcular os componentes independentemente para cada linha e somar.
 
+### Tooltips de resultado (painel escuro por zona)
+
+Cada célula de probabilidade (PM, PC, PU, PV, PW, PZ) e de perda (LA=LU, LB=LV, LC=LM=LW=LZ) no painel escuro de resultados possui um ícone `ⓘ` que exibe um tooltip explicativo ao passar o mouse.
+
+Implementado via `tipRes(texto)` (retorna HTML inline compatível com `.has-tooltip`/`.tooltip-box`) e `TIPS_RES` (objeto com os textos). O tooltip usa fundo branco para contrastar com o painel escuro.
+
+Textos:
+- **PM**: raio próximo ao prédio → LEMP → falha de equipamentos
+- **PC**: raio na própria estrutura → centelhamento → falha de equipamentos
+- **PU**: raio na fiação externa → choque elétrico em pessoas
+- **PV**: raio na fiação externa → incêndio/explosão
+- **PW**: raio na fiação externa → surto conduzido → falha de equipamentos
+- **PZ**: raio perto da fiação externa → indução → falha de equipamentos
+- **LA=LU**: perda por choque elétrico — mesmo valor para S1 e S3
+- **LB=LV**: perda por danos físicos — mesmo valor para S1 e S3
+- **LC=LM=LW=LZ**: perda por falha de sistemas — mesmo valor para S1, S2, S3 e S4
+
 ### Nomeação de Zonas
 - O cabeçalho de cada zona exibe o título fixo **"Zona N"** (negrito, não editável) e, abaixo dele, um input de texto secundário (`nome-zona-{id}`, maxlength=40, placeholder `"Clique para nomear esta zona…"`).
 - O título fixo deixa clara a numeração; o campo de nome é opcional e serve para identificação descritiva (ex.: "Sala de Servidores") — usado pelo futuro módulo de relatório.
