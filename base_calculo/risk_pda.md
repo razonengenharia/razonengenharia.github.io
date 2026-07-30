@@ -58,7 +58,7 @@ Cada zona no array possui:
 - Inputs (ids dinâmicos): `pta-{id}`, `pb-{id}`, `pspd-{id}`, `wm1-{id}`, `wm2-{id}`, `ks3-{id}`, e por linha (`en`/`si`): `uw-{prefixo}-{id}`, `cld-{prefixo}-{id}`, `ptu-{prefixo}-{id}`, `peb-{prefixo}-{id}`, `pld-{prefixo}-{id}`, `pli-{prefixo}-{id}`, e do Anexo C: `nz-{id}`, `tz-{id}`, `rs-{id}`, `rt-{id}`, `rp-{id}`, `rf-{id}`, `hz-{id}`, `lf-r1-{id}`, `lo-r1-{id}`, `lf-r4-{id}`, `lo-r4-{id}`, `roteamento-{id}`.
 - `nt` é **global** (id `nt-global`, na seção de dados da edificação) — não pertence a cada zona.
 - `nome-zona-{id}`: campo de texto editável abaixo do título fixo **"Zona N"** (maxlength=40, placeholder `"Clique para nomear esta zona…"`). Inicia vazio.
-- **Inputs numéricos iniciam em branco**: todos os campos de entrada numérica (`nz-{id}`, `tz-{id}`, `L`, `W`, `H`, `LL` das linhas, etc.) não têm valor padrão — o campo começa vazio. Exceção: `Wm1-{id}` e `Wm2-{id}` iniciam em `0` (bloqueados — ver seção Wm1 e Wm2).
+- **Inputs numéricos iniciam em branco**: todos os campos de entrada numérica (`nz-{id}`, `tz-{id}`, `L`, `W`, `H`, `LL` das linhas, etc.) não têm valor padrão — o campo começa vazio. Exceção: `wm1-{id}` e `wm2-{id}` iniciam em `0` (bloqueados — ver seção Wm1 e Wm2).
 - `.anexoB_resultado`: `{ PA, PB, PSPD, energia: { PM, PC, PU, PV, PW, PZ }, sinal: { PM, PC, PU, PV, PW, PZ } }`
 - `.anexoC_resultado`: `{ R1, F, R4 }`
 
@@ -83,8 +83,8 @@ Ai = 4000 × Ll                                         # Área de captura por i
 Nd  = Ng × Ad × Cd × 10⁻⁶          # Impactos diretos na estrutura (S1)
 Nm  = Ng × Am × 10⁻⁶               # Impactos próximos à estrutura (S2)
 
-Ndj_en = Ng × Adj × Cdj × Ct_en × 10⁻⁶  # Impactos via linha de energia (S1 adj.)
-Ndj_si = Ng × Adj × Cdj × Ct_si × 10⁻⁶  # Impactos via linha de sinal  (S1 adj.)
+Ndj_en = Ng × Adj × Cdj × Ct_en × 10⁻⁶  # Impactos via linha de energia (S3 adj.)
+Ndj_si = Ng × Adj × Cdj × Ct_si × 10⁻⁶  # Impactos via linha de sinal  (S3 adj.)
 Nl  = Ng × Al × Ci × Ct × Ce × 10⁻⁶  # Impactos diretos na linha (S3)
 Ni  = Ng × Ai × Ci × Ct × Ce × 10⁻⁶  # Impactos induzidos próximos à linha (S4)
 ```
@@ -357,7 +357,7 @@ O filtro é aplicado em `calcularRiscos()` após calcular `Nl`/`Ni`, **antes** d
 | Fonte Externa | **OFF** | **OFF** |
 | ADJ | **ON** | **OFF** |
 
-**Resultado:** Todos os componentes de sinal (RU/si, RW/si, FV/si, FW/si, RZ/si) são zero — não existem cabos de sinal. O risco de energia é calculado exclusivamente com `Ndj_en`. Esta é a configuração normativamente mais simples: uma única fonte de perigo, vinda do galpão.
+**Resultado:** Todos os componentes S3 e S4 de sinal são zero — não existem cabos de sinal. O risco de energia é calculado exclusivamente com `Ndj_en` (Nl_en = 0, Ni_en = 0). Esta é a configuração normativamente mais simples: uma única fonte de perigo, vinda do galpão.
 
 ---
 
@@ -401,19 +401,7 @@ O `Ct` aplicado é o da **linha que conecta os dois prédios**: para a linha de 
 
 **Uso nos componentes de risco:**
 
-`Ndj_en` e `Ndj_si` são somados a `Nl_en` e `Nl_si` respectivamente, exclusivamente nos componentes de fonte S3 (impacto na linha + adjacente):
-
-| Componente | Fórmula |
-|-----------|---------|
-| RU | `(Nl_en + Ndj_en) × PU × LU` vs `(Nl_si + Ndj_si) × PU × LU` |
-| RV | `(Nl_en + Ndj_en) × PV × LV` vs `(Nl_si + Ndj_si) × PV × LV` |
-| RW | `(Nl_en + Ndj_en) × PW × LC` vs `(Nl_si + Ndj_si) × PW × LC` |
-| FV | `(Nl_en + Ndj_en) × PEB_en` vs `(Nl_si + Ndj_si) × PEB_si` |
-| FW | `(Nl_en + Ndj_en) × PW` vs `(Nl_si + Ndj_si) × PW` |
-| RV_R4 | `(Nl_en + Ndj_en) × PV × LB_R4` vs `(Nl_si + Ndj_si) × PV × LB_R4` |
-| RW_R4 | `(Nl_en + Ndj_en) × PW × LO_R4` vs `(Nl_si + Ndj_si) × PW × LO_R4` |
-
-Componentes que **não** usam Ndj: RA, RB, RC, RM, RZ, FB, FC, FM, FZ (fontes S1, S2 e S4 — não envolvem linha adjacente).
+`Ndj_en` e `Ndj_si` são somados a `Nl_en` e `Nl_si` respectivamente nos componentes S3 de cada risco (RU, RV, RW, FV, FW, RV_R4, RW_R4). Componentes S1, S2 e S4 não usam Ndj. Para as fórmulas detalhadas por linha (energia vs. sinal), ver seções 5.4, 5.5 e 5.6, e a tabela de impacto na seção "Filtro de Existência de Serviço" acima.
 
 **Decisão de roteamento (por zona):**
 
