@@ -267,8 +267,35 @@ A seleção de FT para F (crítico ou não crítico) é feita pelo usuário dire
 - O risco total é a **soma** dos riscos de todas as zonas.
 
 ### Estrutura Adjacente
-- Quando há uma edificação adjacente conectada por linha, `Ndj` é calculado com a geometria da adjacente e o `Ct` da linha.
-- `Ndj` entra somado a `Nl` nos componentes S3 (RU, RV, RW) e em FV.
+
+Ativada por toggle. Quando ativa, o usuário informa L/W/H e Cdj da edificação adjacente.
+
+**Cálculo de Ndj — dois valores independentes por linha:**
+
+```
+Adj  = (L_adj × W_adj) + (2 × 3H_adj × (L_adj + W_adj)) + (π × (3H_adj)²)
+
+Ndj_en = Ng × Adj × Cdj × Ct_energia × 10⁻⁶
+Ndj_si = Ng × Adj × Cdj × Ct_sinal   × 10⁻⁶
+```
+
+O `Ct` aplicado é o da **linha que conecta os dois prédios**: para a linha de energia usa-se `En_Ct` (fator de transformação da energia, ex: 0,0006 para AT→BT); para a linha de sinal usa-se `Si_Ct` (geralmente 1, sem transformador). Isso é correto normativamente — a linha que chega à edificação adjacente percorre o mesmo trajeto que `Nl`, portanto o mesmo `Ct` se aplica.
+
+**Uso nos componentes de risco:**
+
+`Ndj_en` e `Ndj_si` são somados a `Nl_en` e `Nl_si` respectivamente, exclusivamente nos componentes de fonte S3 (impacto na linha + adjacente):
+
+| Componente | Fórmula |
+|-----------|---------|
+| RU | `(Nl_en + Ndj_en) × PU × LU` vs `(Nl_si + Ndj_si) × PU × LU` |
+| RV | `(Nl_en + Ndj_en) × PV × LV` vs `(Nl_si + Ndj_si) × PV × LV` |
+| RW | `(Nl_en + Ndj_en) × PW × LC` vs `(Nl_si + Ndj_si) × PW × LC` |
+| FV | `(Nl_en + Ndj_en) × PEB_en` vs `(Nl_si + Ndj_si) × PEB_si` |
+| FW | `(Nl_en + Ndj_en) × PW` vs `(Nl_si + Ndj_si) × PW` |
+| RV_R4 | `(Nl_en + Ndj_en) × PV × LB_R4` vs `(Nl_si + Ndj_si) × PV × LB_R4` |
+| RW_R4 | `(Nl_en + Ndj_en) × PW × LO_R4` vs `(Nl_si + Ndj_si) × PW × LO_R4` |
+
+Componentes que **não** usam Ndj: RA, RB, RC, RM, RZ, FB, FC, FM, FZ (fontes S1, S2 e S4 — não envolvem linha adjacente).
 
 ### Roteamento das Linhas (item 6.4.5)
 - **Mesmo roteamento**: usar somente a linha de pior característica (geralmente sinal, por ter menor Uw e CT=1 sem atenuação de transformador). Não somar.
