@@ -348,9 +348,9 @@ function adicionarZona() {
                         `<select id="pspd-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optPSPD}</select>`)}
                     <div class="grid grid-cols-2 gap-2">
                         ${campoTip('Wm1 (m)', TIPS_B.wm1,
-                            `<input type="number" id="wm1-${id}" value="0" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                            `<input type="number" id="wm1-${id}" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
                         ${campoTip('Wm2 (m)', TIPS_B.wm2,
-                            `<input type="number" id="wm2-${id}" value="0" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
+                            `<input type="number" id="wm2-${id}" min="0" step="0.1" class="w-full p-2 border rounded text-xs" oninput="calcularRiscos()">`)}
                     </div>
                     ${campoTip('Fiação Interna (KS3)', TIPS_B.ks3,
                         `<select id="ks3-${id}" class="w-full p-2 bg-slate-50 border rounded text-[11px]" onchange="calcularRiscos()">${optKS3}</select>`)}
@@ -404,9 +404,9 @@ function adicionarZona() {
                     <div class="space-y-3">
                         <p class="text-[9px] text-amber-700 font-semibold uppercase tracking-wide">Ocupação</p>
                         ${campoTip('Pes. nesta zona (nz)', TIPS_C.nz,
-                            `<input type="number" id="nz-${id}" value="10" min="1" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
+                            `<input type="number" id="nz-${id}" min="1" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
                         ${campoTip('Tempo tz (h/ano)', TIPS_C.tz,
-                            `<input type="number" id="tz-${id}" value="8760" min="1" max="8760" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
+                            `<input type="number" id="tz-${id}" min="1" max="8760" class="w-full p-2 border border-amber-200 rounded text-xs bg-white" oninput="calcularRiscos()">`)}
                         ${campoTip('Estrutura (rs, C.7)', TIPS_C.rs,
                             `<select id="rs-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optRS}</select>`)}
                     </div>
