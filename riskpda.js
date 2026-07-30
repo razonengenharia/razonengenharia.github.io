@@ -247,13 +247,14 @@ const TIPS_RES = {
 };
 
 // Gera ícone de tooltip para uso nos labels dos resultados (painel escuro → tooltip branco)
+// Usa <span> em vez de <div> porque fica dentro de <p> (HTML válido exige inline dentro de block)
 function tipRes(texto) {
     return `<span class="has-tooltip relative inline-flex cursor-help align-middle ml-0.5">
         <i class="fas fa-circle-info text-slate-600 hover:text-slate-300 text-[8px] transition"></i>
-        <div class="tooltip-box absolute z-40 bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-white text-slate-700 text-[10px] leading-snug p-2.5 rounded-lg shadow-xl normal-case font-normal">
+        <span class="tooltip-box absolute z-40 bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-white text-slate-700 text-[10px] leading-snug p-2.5 rounded-lg shadow-xl normal-case font-normal">
             ${texto}
-            <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white"></div>
-        </div>
+            <span class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white"></span>
+        </span>
     </span>`;
 }
 
