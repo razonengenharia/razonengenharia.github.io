@@ -164,6 +164,7 @@ function toggleAdjacente() {
         bloco.classList.remove('hidden');
         setTimeout(() => bloco.classList.remove('opacity-50'), 50);
         inputs.forEach(i => i.disabled = false);
+        atualizarTextoServicos();
     } else {
         bloco.classList.add('opacity-50');
         setTimeout(() => bloco.classList.add('hidden'), 300);
@@ -848,12 +849,12 @@ function atualizarTextoServicos() {
     const info = document.getElementById('adj-servicos-info');
     if (!sel || !info) return;
     const msgs = {
-        ambos:   { en: '≠ 0', si: '≠ 0', cls: 'text-slate-400' },
-        energia: { en: '≠ 0', si: '= 0', cls: 'text-amber-600' },
-        sinal:   { en: '= 0', si: '≠ 0', cls: 'text-sky-600'   }
+        ambos:   { en: '≠ 0', si: '≠ 0', color: '#94a3b8' },  // slate-400
+        energia: { en: '≠ 0', si: '= 0', color: '#d97706' },  // amber-600
+        sinal:   { en: '= 0', si: '≠ 0', color: '#0284c7' }   // sky-600
     };
     const m = msgs[sel.value] || msgs.ambos;
-    info.className = `text-xs mt-1 font-mono ${m.cls}`;
+    info.style.color = m.color;
     info.innerHTML = `NDJ_en <b>${m.en}</b> · NDJ_si <b>${m.si}</b>`;
 }
 
