@@ -57,7 +57,8 @@ let NgAtual   = 0;    // Ng do município selecionado
 Cada zona no array possui:
 - Inputs (ids dinâmicos): `pta-{id}`, `pb-{id}`, `pspd-{id}`, `wm1-{id}`, `wm2-{id}`, `ks3-{id}`, e por linha (`en`/`si`): `uw-{prefixo}-{id}`, `cld-{prefixo}-{id}`, `ptu-{prefixo}-{id}`, `peb-{prefixo}-{id}`, `pld-{prefixo}-{id}`, `pli-{prefixo}-{id}`, e do Anexo C: `nz-{id}`, `tz-{id}`, `rs-{id}`, `rt-{id}`, `rp-{id}`, `rf-{id}`, `hz-{id}`, `lf-r1-{id}`, `lo-r1-{id}`, `lf-r4-{id}`, `lo-r4-{id}`, `roteamento-{id}`.
 - `nt` é **global** (id `nt-global`, na seção de dados da edificação) — não pertence a cada zona.
-- `nome-zona-{id}`: campo de texto editável no cabeçalho de cada zona (maxlength=40), exibido como `Zona X: [nome]`.
+- `nome-zona-{id}`: campo de texto editável abaixo do título fixo **"Zona N"** (maxlength=40, placeholder `"Clique para nomear esta zona…"`). Inicia vazio.
+- **Inputs numéricos iniciam em branco**: todos os campos de entrada numérica (`nz-{id}`, `tz-{id}`, `L`, `W`, `H`, `LL` das linhas, etc.) não têm valor padrão — o campo começa vazio. Exceção: `Wm1-{id}` e `Wm2-{id}` iniciam em `0` (bloqueados — ver seção Wm1 e Wm2).
 - `.anexoB_resultado`: `{ PA, PB, PSPD, energia: { PM, PC, PU, PV, PW, PZ }, sinal: { PM, PC, PU, PV, PW, PZ } }`
 - `.anexoC_resultado`: `{ R1, F, R4 }`
 
@@ -82,7 +83,8 @@ Ai = 4000 × Ll                                         # Área de captura por i
 Nd  = Ng × Ad × Cd × 10⁻⁶          # Impactos diretos na estrutura (S1)
 Nm  = Ng × Am × 10⁻⁶               # Impactos próximos à estrutura (S2)
 
-Ndj = Ng × Adj × Cdj × Ct × 10⁻⁶  # Impactos diretos na estrutura adjacente (S1 adj.)
+Ndj_en = Ng × Adj × Cdj × Ct_en × 10⁻⁶  # Impactos via linha de energia (S1 adj.)
+Ndj_si = Ng × Adj × Cdj × Ct_si × 10⁻⁶  # Impactos via linha de sinal  (S1 adj.)
 Nl  = Ng × Al × Ci × Ct × Ce × 10⁻⁶  # Impactos diretos na linha (S3)
 Ni  = Ng × Ai × Ci × Ct × Ce × 10⁻⁶  # Impactos induzidos próximos à linha (S4)
 ```
@@ -316,8 +318,7 @@ O checkbox "Mesmo roteamento" da zona é a palavra final sobre como combinar os 
 Isso vale para todos os componentes S3: RU, RV, RW, FV, FW, RV_R4, RW_R4. O roteamento da zona cobre todas as linhas (NL + NDJ) porque a norma avalia o risco por zona de estudo, não por origem do cabo.
 
 ### Roteamento das Linhas (item 6.4.5)
-- **Mesmo roteamento**: usar somente a linha de pior característica (geralmente sinal, por ter menor Uw e CT=1 sem atenuação de transformador). Não somar.
-- **Roteamentos diferentes**: calcular os componentes independentemente para cada linha e somar.
+Ver seção 5.3 — a mesma regra aplica-se a todos os componentes S3, incluindo as parcelas `Ndj_en`/`Ndj_si` (ver Estrutura Adjacente acima).
 
 ### Tooltips de resultado — Anexo A (painel escuro global)
 
@@ -360,7 +361,7 @@ Textos:
 
 ### CLD → PLD — travamento automático (Tabela B.8)
 - Quando `CLD = 1` (não blindada), `PLD` é travado em `1` e o select fica desabilitado (`disabled`, visual opacified). Isso reflete a Tabela B.8 da norma, onde a linha "não blindada" (RS → ∞) resulta em PLD = 1 para qualquer Uw.
-- Implementado pela função `sincronizarCLD(cldEl, id, prefixo)` chamada no `onchange` dos selects de CLD.
+- Implementado pela função `sincronizarCLD(cldEl, id, prefixo)`, chamada no `onchange` dos selects de CLD e também em `adicionarZona()` logo após o `appendChild`, garantindo que o travamento seja aplicado já na criação da zona (não apenas na mudança manual).
 - Quando CLD ≠ 1 (blindada ou duto), PLD fica livre.
 
 ### nt — campo global (Fator de pessoas)
@@ -478,7 +479,7 @@ if (usuario.limite_laudos !== null && total.count >= usuario.limite_laudos) {
 }
 ```
 
-### 8.6 O que é necessário para começar (pendente para amanhã)
+### 8.6 O que é necessário para começar (pendente)
 
 - [ ] **String de conexão do Neon** — formato `postgresql://user:pass@host/dbname?sslmode=require`
 - [ ] **Login no Vercel** — rodar `npx vercel login` e `npx vercel link` na pasta do projeto
