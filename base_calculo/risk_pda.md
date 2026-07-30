@@ -18,7 +18,7 @@ razonengenharia.github.io/
 ├── riskpda.html               # Interface completa (layout, painel de resultados)
 ├── riskpda.js                 # Motor de cálculo único (Anexos A, B, C)
 └── data/
-    ├── municipios_ng.json     # Ng por município: 2975 registros, chaves compactas {m, u, n}
+    ├── municipios_ng.json     # Ng por município: 5557 registros, chaves compactas {m, u, n}
     ├── tabelas_anexo_a.json   # Tabelas A1 (Cd), A2 (Ci), A3 (Ct), A4 (Ce)
     ├── tabelas_anexo_b.json   # Tabelas B1–B9 (PTA, PB, PSPD, CLD, KS3, PTU, PEB, PLD, PLI)
     └── tabelas_anexo_c.json   # Tabelas C2–C7 e D2 (rt, rp, rf, hz, rs, LF, LO)
@@ -26,7 +26,7 @@ razonengenharia.github.io/
 
 ### municipios_ng.json — estrutura
 
-Fonte: Tabela da NBR 5419-2:2026 (2975 municípios). Gerado a partir da planilha `ng.xlsx`.
+Fonte: Tabela da NBR 5419-2:2026 — todos os 5557 municípios brasileiros com Ng definido. Gerado em duas etapas: (1) importação da planilha `ng.xlsx` (~A até início do M, parcialmente corrompida); (2) leitura visual (Claude Vision) das páginas 97–182 do PDF `Caderno-2-pt-2.pdf` para preenchimento dos municípios ausentes, totalizando cobertura completa do alfabeto.
 
 ```json
 [{"m":"Araçatuba","u":"SP","n":14}, ...]
@@ -292,74 +292,95 @@ A seleção de FT para F (crítico ou não crítico) é feita pelo usuário dire
 
 ---
 
-## 8. Banco de Dados (Neon PostgreSQL — On Hold)
+## 8. Banco de Dados e Autenticação (Neon + Vercel — Pendente)
 
-Um banco **Neon** já foi criado para futura persistência de análises e autenticação de usuários. A integração será feita somente após a validação completa dos cálculos pelo engenheiro.
+### 8.1 Decisão de arquitetura
 
-**Schema planejado (referência):**
+A ferramenta será **separada do GitHub Pages** e hospedada no **Vercel** (free tier), com autenticação e persistência via **Neon PostgreSQL**. O restante do site institucional permanece no GitHub Pages.
+
+Acesso futuro: `pda.razonengenharia.com.br` → Vercel (ou subdomínio do Vercel por enquanto).
+
+### 8.2 Modelo multi-tenant (sustentável para comercialização futura)
+
+O schema é projetado para suportar desde uso próprio até múltiplos clientes com planos e limites diferenciados, sem necessidade de refatoração futura.
 
 ```sql
+-- Planos de acesso
+CREATE TABLE planos (
+    id           SERIAL PRIMARY KEY,
+    nome         VARCHAR(50) NOT NULL,   -- 'proprietario', 'pro', 'free'
+    limite_laudos INTEGER DEFAULT 100,   -- NULL = ilimitado
+    ativo        BOOLEAN DEFAULT TRUE
+);
+
 -- Usuários / credenciais
 CREATE TABLE usuarios (
     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     nome         VARCHAR(100) NOT NULL,
     email        VARCHAR(150) UNIQUE NOT NULL,
-    senha_hash   VARCHAR(255) NOT NULL,  -- bcrypt / argon2
+    senha_hash   VARCHAR(255) NOT NULL,  -- argon2id
     crea         VARCHAR(50),
+    plano_id     INTEGER REFERENCES planos(id) DEFAULT 1,
     ativo        BOOLEAN DEFAULT TRUE,
-    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    criado_em    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Cabeçalho de cada análise
-CREATE TABLE analises_pda (
+-- Laudos / análises salvas
+CREATE TABLE laudos (
     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     usuario_id   UUID REFERENCES usuarios(id) ON DELETE CASCADE,
-    nome_projeto VARCHAR(255) NOT NULL,
-    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Parâmetros globais (Anexo A)
-CREATE TABLE estruturas (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    analise_id      UUID REFERENCES analises_pda(id) ON DELETE CASCADE,
-    ng              NUMERIC(6,2),
-    comprimento     NUMERIC(8,2),
-    largura         NUMERIC(8,2),
-    altura          NUMERIC(8,2),
-    fator_cd        NUMERIC(4,2),
-    tem_adjacente   BOOLEAN DEFAULT FALSE,
-    comprimento_adj NUMERIC(8,2) DEFAULT 0,
-    largura_adj     NUMERIC(8,2) DEFAULT 0,
-    altura_adj      NUMERIC(8,2) DEFAULT 0,
-    fator_cda       NUMERIC(4,2) DEFAULT 1
-);
-
--- Linhas conectadas (energia e sinal)
-CREATE TABLE linhas_conectadas (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    analise_id      UUID REFERENCES analises_pda(id) ON DELETE CASCADE,
-    tipo_linha      VARCHAR(50),    -- 'energia' ou 'sinal'
-    comprimento_ll  NUMERIC(8,2),
-    fator_ci        NUMERIC(4,2),
-    fator_ct        NUMERIC(4,2),
-    fator_ce        NUMERIC(4,2)
-);
-
--- Zonas de estudo (Anexos B e C — armazenadas como JSONB para flexibilidade)
-CREATE TABLE zonas_estudo (
-    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    analise_id     UUID REFERENCES analises_pda(id) ON DELETE CASCADE,
-    nome_zona      VARCHAR(100),
-    dados_anexo_b  JSONB,   -- todos os P e KS da zona
-    dados_anexo_c  JSONB,   -- nz, nt, tz, rs, rt, rp, rf, hz, LF, LO
-    r1_zona        NUMERIC(14,10),
-    f_zona         NUMERIC(14,10),
-    r4_zona        NUMERIC(14,10)
+    nome         VARCHAR(255) NOT NULL,
+    dados        JSONB NOT NULL,         -- snapshot completo da análise (inputs + resultados)
+    criado_em    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-**Estratégia de integração:**
-1. Validar todos os cálculos dos Anexos A, B e C com o engenheiro.
-2. Criar Vercel Serverless Functions como proxy seguro (esconde a connection string do cliente).
-3. Substituir o bypass de login pelo fluxo real de autenticação JWT + Neon.
-4. Implementar save/load de análises por usuário.
+> **Por que `dados JSONB` e não tabelas separadas por Anexo?**
+> A análise completa é um documento coerente — salvar como JSONB permite versionar o snapshot exato sem joins complexos. As tabelas normalizadas (estruturas, zonas, linhas) seriam necessárias apenas para relatórios agregados entre laudos, que não é um requisito atual.
+
+### 8.3 Fluxo de autenticação planejado
+
+```
+Browser → POST /api/login → Vercel Serverless Function
+                          → valida email + senha contra Neon
+                          → retorna JWT (httpOnly cookie, 7 dias)
+Browser → GET /riskpda   → Vercel Edge Middleware verifica JWT
+                          → redireciona para /login se inválido
+```
+
+- Senha: **argon2id** (mais seguro que bcrypt para senhas)
+- Token: **JWT assinado** com `JWT_SECRET` (variável de ambiente no Vercel)
+- Cookie: `httpOnly; Secure; SameSite=Strict` — inacessível ao JS do cliente
+
+### 8.4 Stack técnica definida
+
+| Camada | Tecnologia |
+|--------|-----------|
+| Host | Vercel (free) |
+| Banco | Neon PostgreSQL (free tier) |
+| Auth | JWT manual (sem Auth.js — mais simples para o escopo atual) |
+| Hash de senha | `argon2` (Node.js) |
+| API | Vercel Serverless Functions (`/api/*.js`) |
+| Frontend | Mesmo HTML/JS atual, sem framework |
+
+### 8.5 Limite de laudos por plano
+
+```javascript
+// Em /api/laudos/salvar.js
+const usuario = await db.query('SELECT u.*, p.limite_laudos FROM usuarios u JOIN planos p ON p.id = u.plano_id WHERE u.id = $1', [userId]);
+const total = await db.query('SELECT COUNT(*) FROM laudos WHERE usuario_id = $1', [userId]);
+
+if (usuario.limite_laudos !== null && total.count >= usuario.limite_laudos) {
+    return res.status(403).json({ erro: 'Limite de laudos atingido para seu plano.' });
+}
+```
+
+### 8.6 O que é necessário para começar (pendente para amanhã)
+
+- [ ] **String de conexão do Neon** — formato `postgresql://user:pass@host/dbname?sslmode=require`
+- [ ] **Login no Vercel** — rodar `npx vercel login` e `npx vercel link` na pasta do projeto
+- [ ] Criar tabelas no Neon (script acima em 8.2)
+- [ ] Criar usuário proprietário manualmente via SQL
+- [ ] Implementar `/api/login.js`, `/api/me.js`, middleware de proteção de rota
+- [ ] Substituir `bypassLogin()` no HTML pelo fluxo real
