@@ -270,13 +270,23 @@ A seleção de FT para F (crítico ou não crítico) é feita pelo usuário dire
 
 Ativada por toggle. Quando ativa, o usuário informa L/W/H e Cdj da edificação adjacente.
 
+**Campo "Serviços interligados" (obrigatório quando ADJ ativo):**
+
+Controla quais NDJ serão não-zero. Opções:
+
+| Seleção | Efeito |
+|---------|--------|
+| `Energia + Sinal (Ambos)` | Calcula Ndj_en e Ndj_si normalmente |
+| `Apenas Energia` | Ndj_si = 0; apenas Ndj_en calculado |
+| `Apenas Sinal` | Ndj_en = 0; apenas Ndj_si calculado |
+
 **Cálculo de Ndj — dois valores independentes por linha:**
 
 ```
 Adj  = (L_adj × W_adj) + (2 × 3H_adj × (L_adj + W_adj)) + (π × (3H_adj)²)
 
-Ndj_en = Ng × Adj × Cdj × Ct_energia × 10⁻⁶
-Ndj_si = Ng × Adj × Cdj × Ct_sinal   × 10⁻⁶
+Ndj_en = Ng × Adj × Cdj × Ct_energia × 10⁻⁶  (0 se "Apenas Sinal")
+Ndj_si = Ng × Adj × Cdj × Ct_sinal   × 10⁻⁶  (0 se "Apenas Energia")
 ```
 
 O `Ct` aplicado é o da **linha que conecta os dois prédios**: para a linha de energia usa-se `En_Ct` (fator de transformação da energia, ex: 0,0006 para AT→BT); para a linha de sinal usa-se `Si_Ct` (geralmente 1, sem transformador). Isso é correto normativamente — a linha que chega à edificação adjacente percorre o mesmo trajeto que `Nl`, portanto o mesmo `Ct` se aplica.
@@ -296,6 +306,14 @@ O `Ct` aplicado é o da **linha que conecta os dois prédios**: para a linha de 
 | RW_R4 | `(Nl_en + Ndj_en) × PW × LO_R4` vs `(Nl_si + Ndj_si) × PW × LO_R4` |
 
 Componentes que **não** usam Ndj: RA, RB, RC, RM, RZ, FB, FC, FM, FZ (fontes S1, S2 e S4 — não envolvem linha adjacente).
+
+**Decisão de roteamento (por zona):**
+
+O checkbox "Mesmo roteamento" da zona é a palavra final sobre como combinar os riscos de energia e sinal — incluindo as parcelas NDJ. A função `combinar(en, si)` aplica:
+- Mesmo roteamento → `max(en, si)`
+- Roteamentos diferentes → `en + si`
+
+Isso vale para todos os componentes S3: RU, RV, RW, FV, FW, RV_R4, RW_R4. O roteamento da zona cobre todas as linhas (NL + NDJ) porque a norma avalia o risco por zona de estudo, não por origem do cabo.
 
 ### Roteamento das Linhas (item 6.4.5)
 - **Mesmo roteamento**: usar somente a linha de pior característica (geralmente sinal, por ter menor Uw e CT=1 sem atenuação de transformador). Não somar.

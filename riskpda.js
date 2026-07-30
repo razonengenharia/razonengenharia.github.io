@@ -599,8 +599,9 @@ function calcularRiscos() {
     let Ndj_en = 0, Ndj_si = 0;
     if (document.getElementById('toggle-adjacente') && document.getElementById('toggle-adjacente').checked) {
         const Adj = (L_adj * W_adj) + (2 * (3 * H_adj) * (L_adj + W_adj)) + (Math.PI * Math.pow(3 * H_adj, 2));
-        Ndj_en = NgAtual * Adj * Cdj * En_Ct * fatorDeRisco;
-        Ndj_si = NgAtual * Adj * Cdj * Si_Ct * fatorDeRisco;
+        const servicosAdj = document.getElementById('adj-servicos')?.value || 'ambos';
+        if (servicosAdj !== 'sinal')   Ndj_en = NgAtual * Adj * Cdj * En_Ct * fatorDeRisco;
+        if (servicosAdj !== 'energia') Ndj_si = NgAtual * Adj * Cdj * Si_Ct * fatorDeRisco;
     }
 
     const Al_en = 40 * En_LL, Ai_en = 4000 * En_LL;
