@@ -103,12 +103,12 @@
                     <div><label class="text-sm font-semibold text-slate-700 mb-2 block">Fator (Cdj)</label><select id="fator-cdj" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" onchange="calcularRiscos()" disabled></select></div>
                     <div>
                         <label class="text-sm font-semibold text-slate-700 mb-2 block">Serviços interligados</label>
-                        <select id="adj-servicos" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" onchange="calcularRiscos()" disabled>
+                        <select id="adj-servicos" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" onchange="atualizarTextoServicos(); calcularRiscos()" disabled>
                             <option value="ambos">Energia + Sinal (Ambos)</option>
                             <option value="energia">Apenas Energia</option>
                             <option value="sinal">Apenas Sinal</option>
                         </select>
-                        <p class="text-xs text-slate-400 mt-1">Define quais NDJ serão ≠ 0</p>
+                        <p id="adj-servicos-info" class="text-xs text-slate-400 mt-1">NDJ_en ≠ 0 · NDJ_si ≠ 0</p>
                     </div>
                 </div>
             </div>

@@ -843,6 +843,20 @@ function calcularRiscos() {
     calcularPerdaR4();
 }
 
+function atualizarTextoServicos() {
+    const sel = document.getElementById('adj-servicos');
+    const info = document.getElementById('adj-servicos-info');
+    if (!sel || !info) return;
+    const msgs = {
+        ambos:   { en: '≠ 0', si: '≠ 0', cls: 'text-slate-400' },
+        energia: { en: '≠ 0', si: '= 0', cls: 'text-amber-600' },
+        sinal:   { en: '= 0', si: '≠ 0', cls: 'text-sky-600'   }
+    };
+    const m = msgs[sel.value] || msgs.ambos;
+    info.className = `text-xs mt-1 font-mono ${m.cls}`;
+    info.innerHTML = `NDJ_en <b>${m.en}</b> · NDJ_si <b>${m.si}</b>`;
+}
+
 function desbloquearWm(inputId, btn) {
     const el = document.getElementById(inputId);
     if (!el) return;
