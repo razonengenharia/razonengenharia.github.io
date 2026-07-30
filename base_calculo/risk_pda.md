@@ -357,6 +357,11 @@ Textos:
 - PLD (Tabela B.8) é lido para o Uw específico de cada linha a partir da resistência de blindagem RS do cabo.
 - PLI (Tabela B.9) é lido para o Uw de cada linha com tabelas separadas por tipo (energia / sinal).
 
+### Wm1 e Wm2 — bloqueio com desbloqueio manual
+- Iniciam em **0** (bloqueados, readonly visual). A maioria das edificações não possui blindagem espacial nem malha de SPDA, portanto 0 é o padrão correto.
+- Um link `editar` abaixo de cada campo chama `desbloquearWm(inputId, btn)`: remove o `disabled`, libera o estilo visual, foca o campo e some o botão.
+- Uma vez desbloqueado, o campo permanece editável durante a sessão.
+
 ### Restrições dos fatores KS
 - KS1 e KS2 são limitados a **1** (máximo), conforme NBR 5419-2:2026 item B.4.13.
 - KS1 = 0 quando Wm1 = 0 → na prática é tratado como **1** (sem blindagem = sem redução).
