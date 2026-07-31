@@ -204,6 +204,20 @@ function atualizarVisibilidadeLO_R1() {
     });
 }
 
+function atualizarCorTipoEstrutura() {
+    const sel = document.getElementById('tipo-estrutura');
+    if (!sel) return;
+    if (sel.value === 'critica') {
+        sel.style.backgroundColor = '#FEF2F2';
+        sel.style.borderColor     = '#FCA5A5';
+        sel.style.color           = '#991B1B';
+    } else {
+        sel.style.backgroundColor = '#EFF6FF';
+        sel.style.borderColor     = '#BFDBFE';
+        sel.style.color           = '#1E40AF';
+    }
+}
+
 // ================= FIM DO BLOCO ANEXO A (NÃO ALTERADO) =================
 
 
