@@ -43,15 +43,5 @@
   "tabela_C7_rs": [
     { "valor": 2, "descricao": "Simples: madeira ou alvenaria simples" },
     { "valor": 1, "descricao": "Robusta: estrutura metálica ou concreto armado" }
-  ],
-  "tabela_D2_LF": [
-    { "valor": 0.5, "descricao": "Hospital, industrial, museu, agricultura" },
-    { "valor": 0.2, "descricao": "Hotel, escola, escritório, comercial, entretenimento" },
-    { "valor": 0.1, "descricao": "Outros / risco de explosão" }
-  ],
-  "tabela_D2_LO": [
-    { "valor": 0.01,   "descricao": "Hospital, industrial, escritório, hotel, comercial" },
-    { "valor": 0.001,  "descricao": "Museu, agricultura, escola, igreja, entretenimento" },
-    { "valor": 0.0001, "descricao": "Outros" }
   ]
 }

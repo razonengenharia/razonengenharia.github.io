@@ -21,7 +21,8 @@ razonengenharia.github.io/
     ├── municipios_ng.json     # Ng por município: 5557 registros, chaves compactas {m, u, n}
     ├── tabelas_anexo_a.json   # Tabelas A1 (Cd), A2 (Ci), A3 (Ct), A4 (Ce)
     ├── tabelas_anexo_b.json   # Tabelas B1–B9 (PTA, PB, PSPD, CLD, KS3, PTU, PEB, PLD, PLI)
-    └── tabelas_anexo_c.json   # Tabelas C2–C7 e D2 (rt, rp, rf, hz, rs, LF, LO)
+    ├── tabelas_anexo_c.json   # Tabelas C2–C7 (rt, rp, rf, hz, rs; LF e LO para R1)
+    └── tabelas_anexo_d.json   # Tabelas D1 (fórmulas) e D2 (LT, LF, LO para R4)
 ```
 
 ### municipios_ng.json — estrutura
@@ -49,7 +50,8 @@ let AnaliseRisco = {
 
 let TABELAS_A = {};   // carregado de tabelas_anexo_a.json
 let TABELAS_B = {};   // carregado de tabelas_anexo_b.json
-let TABELAS_C = {};   // carregado de tabelas_anexo_c.json
+let TABELAS_C = {};   // carregado de tabelas_anexo_c.json (C2–C7: fatores de R1)
+let TABELAS_D = {};   // carregado de tabelas_anexo_d.json (D1 fórmulas, D2: fatores de R4)
 let LISTA_NG  = [];   // carregado de municipios_ng.json
 let NgAtual   = 0;    // Ng do município selecionado
 ```
@@ -156,12 +158,15 @@ PZ  = PSPD × PLI × CLI                 # Falha de sistemas por indução próx
 Fator de pessoas = (nz / nt) × (tz / 8760)     # Eq. C.1
 
 LA = LU = rt × LT × fatorPessoas × rs           # D1 — choque (Eq. C.1 e C.2)
-LB = LV = rp × rf × hz × LF × fatorPessoas × rs # D2 — incêndio/explosão (Eq. C.3)
-LC = LM = LW = LZ = LO × fatorPessoas × rs      # D3 — falha de sistemas (Eq. C.4)
+LB = LV = rp × rf × hz × LF_R1 × fatorPessoas × rs # D2 — incêndio/explosão (Eq. C.3)
+LC = LM = LW = LZ = LO_R1 × fatorPessoas × rs   # D3 — falha de sistemas (Eq. C.4)
 
-LT = 0,01  (fixo, Tabela C.2 — todos os tipos)
-LF = Tabela C.2 (conforme uso da zona — R1)
-LO = Tabela C.2 (conforme uso da zona — R1)
+LT    = 0,01  (constante normativa, hardcoded — não há input para LT)
+LF_R1 = Tabela C.2 (dropdown por uso da zona — R1: Vidas)
+LO_R1 = Tabela C.2 (dropdown por uso da zona — R1: Vidas)
+        → Visível e ativo APENAS para estrutura Crítica/Explosiva
+        → Para estrutura Comum: campo oculto e valor forçado a 0 no cálculo
+          (fundamento: NBR 5419-2:2026, item 4.3.1 e Tabela 2, Nota "a")
 ```
 
 ### 5.2 Perdas econômicas R4 (Tabela D.1, simplificada com ca/ct = 1)
@@ -234,13 +239,13 @@ R4_total = Σ R4_zona
 
 | Tabela | Variável | Descrição |
 |--------|----------|-----------|
-| C.2 | LT, LF, LO | Valores típicos de perda para R1 (D1: LT=0,01; D2: LF por uso; D3: LO por uso) |
+| C.2 | LF_R1, LO_R1 | Fatores de perda de **vidas** (R1): LF — dano físico/incêndio; LO — falha de sistemas (apenas estrutura crítica) |
 | C.3 | rt | Fator de redução pelo tipo de piso/solo (terra a asfalto: 0,01 a 0,000001) |
 | C.4 | rp | Fator de redução pelas providências anti-incêndio (1 / 0,5 / 0,2) |
 | C.5 | rf | Fator de redução pelo risco de incêndio/explosão da zona (0,0 a 1,0) |
 | C.6 | hz | Fator de aumento pelo perigo de pânico ou dificuldade de evacuação (1 a 10) |
 | C.7 | rs | Fator pelo tipo de estrutura: simples=2 (madeira/alvenaria), robusta=1 (metálica/armado) |
-| D.2 | LF, LO | Valores típicos de perda para R4 (maiores que C.2, pois são perdas patrimoniais) |
+| D.2 | LF_R4, LO_R4 | Fatores de perda **econômica** (R4): valores maiores que C.2 pois medem dano patrimonial, sem fator de pessoas |
 
 ---
 
@@ -481,18 +486,33 @@ Textos:
 
 ### Tipo de estrutura — filtro de R1 (item 4.3.1 e Tabela 2)
 
-O campo global **"Tipo de estrutura"** (Seção 1 da UI) controla quais componentes entram no cálculo de R1, conforme NBR 5419-2:2026, item 4.3.1 e Tabela 2:
+O campo global **"Tipo de estrutura"** (Seção 1 da UI) controla duas coisas em R1, conforme NBR 5419-2:2026, item 4.3.1, Nota, e Tabela 2, Nota "a":
+
+#### 1. Quais componentes entram no somatório de R1
 
 | Tipo | R1 calculado | Exemplos |
 |------|-------------|----------|
-| **Comum** (padrão) | `RA + RB + RU + RV` | Residência, escritório, comércio, galpão |
+| **Comum** (padrão) | `RA + RB + RU + RV` | Residência, escritório, comércio, galpão, fazenda |
 | **Crítica / Explosiva** | `RA + RB + RC + RM + RU + RV + RW + RZ` | Hospital, UTI, depósito de munições, controle de tráfego aéreo |
 
-**Por que isso importa:** somar RC, RM, RW e RZ para uma residência comum pode gerar falso positivo de "Necessita Proteção", exigindo medidas de proteção interna (MPS) que a norma não obrigaria para aquele uso.
+#### 2. Visibilidade e valor de LO_R1 por zona
 
-**O que não muda:** F e R4 sempre incluem todos os componentes — são métricas de dano a equipamentos e patrimônio, onde a classificação da estrutura não altera a obrigação de proteção.
+| Tipo | Campo LO_R1 na UI | Valor usado no cálculo |
+|------|-------------------|------------------------|
+| **Comum** | Oculto | Forçado a **0** |
+| **Crítica / Explosiva** | Visível — dropdown Tabela C.2 | Valor selecionado (Explosão / UTI / Outras partes de hospital) |
 
-**Implementado por:** `tipoEstrutura` e `incluiSistemas` lidos uma vez antes do forEach de zonas em `calcularRiscos()`. A nota do rodapé do painel de resultados (`#nota-r1-texto`) atualiza dinamicamente para refletir a fórmula ativa.
+**Fundamento normativo:** A nota abaixo da fórmula de R1 no item 4.3.1 afirma que RC, RM, RW e RZ "aplicam-se somente às estruturas com risco de explosão e a outras estruturas onde falhas de sistemas internos possam **imediatamente** colocar em risco a vida humana". Como LO_R1 é o multiplicador que pondera esses componentes (via LC = LO_R1 × fatorPessoas × rs), forçá-lo a 0 em estrutura comum zera todos os quatro componentes de sistemas — conforme a restrição normativa.
+
+**Exemplo prático:** Uma fazenda (estrutura comum) pode ter prejuízo financeiro com a queima do sistema de irrigação (calculado corretamente via LO_R4 em R4), mas a norma não contabiliza esse evento como risco de *morte* em R1. Sem esta separação, LO_R1 inflava R1 com perda de sistemas, gerando falso positivo de "Necessita Proteção".
+
+**O que não muda:** F e R4 sempre incluem todos os componentes e LO_R4 é sempre habilitado — são métricas de dano patrimonial, independentes da classificação da estrutura.
+
+**Implementado por:**
+- `atualizarVisibilidadeLO_R1()` — oculta/exibe `#lo-r1-bloco-{id}` por zona; chamada no `onchange` do select `tipo-estrutura` e ao adicionar zona.
+- Em `calcularRiscos()`: `LO_R1 = incluiSistemas ? valor_do_select : 0` (defesa em profundidade, independente do estado do DOM).
+- `tipoEstrutura` e `incluiSistemas` lidos antes do forEach de zonas.
+- A nota do rodapé (`#nota-r1-texto`) atualiza dinamicamente para refletir a fórmula ativa.
 
 ### R3 — Patrimônio Cultural
 - Previsto na norma (RT = 10⁻⁴) mas **não implementado** nesta versão do RiskPDA. Em stand-by até decisão de escopo.

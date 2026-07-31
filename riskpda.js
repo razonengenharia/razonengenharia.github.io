@@ -13,6 +13,7 @@ let AnaliseRisco = {
 let TABELAS_A = {};
 let TABELAS_B = {};
 let TABELAS_C = {};
+let TABELAS_D = {};
 let LISTA_NG = [];
 let NgAtual = 0;
 
@@ -22,13 +23,15 @@ async function carregarDados() {
         const resA = await fetch('./data/tabelas_anexo_a.json');
         const resB = await fetch('./data/tabelas_anexo_b.json');
         const resC = await fetch('./data/tabelas_anexo_c.json');
+        const resD = await fetch('./data/tabelas_anexo_d.json');
         const resNg = await fetch('./data/municipios_ng.json');
 
-        if (!resA.ok || !resB.ok || !resC.ok || !resNg.ok) throw new Error("Erro ao buscar arquivos JSON. Verifique as pastas.");
+        if (!resA.ok || !resB.ok || !resC.ok || !resD.ok || !resNg.ok) throw new Error("Erro ao buscar arquivos JSON. Verifique as pastas.");
 
         TABELAS_A = await resA.json();
         TABELAS_B = await resB.json();
         TABELAS_C = await resC.json();
+        TABELAS_D = await resD.json();
         LISTA_NG = await resNg.json();
 
         popularFiltrosGlobais();
@@ -185,6 +188,22 @@ function toggleRua(prefixo) {
         campos.classList.add('opacity-40', 'pointer-events-none');
     }
 }
+function atualizarVisibilidadeLO_R1() {
+    const tipo = document.getElementById('tipo-estrutura')?.value || 'comum';
+    const mostrar = tipo === 'critica';
+    AnaliseRisco.zonas.forEach(zona => {
+        const bloco = document.getElementById(`lo-r1-bloco-${zona.id}`);
+        if (!bloco) return;
+        if (mostrar) {
+            bloco.classList.remove('hidden');
+        } else {
+            bloco.classList.add('hidden');
+            const sel = document.getElementById(`lo-r1-${zona.id}`);
+            if (sel) sel.value = '0';
+        }
+    });
+}
+
 // ================= FIM DO BLOCO ANEXO A (NÃO ALTERADO) =================
 
 
@@ -325,8 +344,8 @@ function adicionarZona() {
     const optHZ   = TABELAS_C.tabela_C6_hz.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
     const optLF_C2 = TABELAS_C.tabela_C2_LF.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
     const optLO_C2 = TABELAS_C.tabela_C2_LO.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
-    const optLF_D2 = TABELAS_C.tabela_D2_LF.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
-    const optLO_D2 = TABELAS_C.tabela_D2_LO.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
+    const optLF_D2 = TABELAS_D.tabela_D2_LF.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
+    const optLO_D2 = TABELAS_D.tabela_D2_LO.map(d => `<option value="${d.valor}">${d.descricao} (${d.valor})</option>`).join('');
 
     div.innerHTML = `
         <div class="bg-slate-100 rounded-t-2xl px-6 py-4 border-b border-slate-200 flex justify-between items-center">
@@ -443,8 +462,10 @@ function adicionarZona() {
                         <p class="text-[9px] text-slate-400 -mt-2">(Tab. C.2)</p>
                         ${campoTip('LF — danos físicos / incêndio', TIPS_C.lf_r1,
                             `<select id="lf-r1-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optLF_C2}</select>`)}
+                        <div id="lo-r1-bloco-${id}">
                         ${campoTip('LO — falha de sistemas', TIPS_C.lo_r1,
                             `<select id="lo-r1-${id}" class="w-full p-2 bg-white border border-amber-200 rounded text-[11px]" onchange="calcularRiscos()">${optLO_C2}</select>`)}
+                        </div>
                     </div>
 
                     <!-- Col 4: Perdas R4 -->
@@ -554,6 +575,7 @@ function adicionarZona() {
         document.getElementById('btn-add-zona').classList.add('hidden');
     }
 
+    atualizarVisibilidadeLO_R1();
     calcularRiscos();
 }
 
@@ -718,7 +740,7 @@ function calcularRiscos() {
         const rf  = parseFloat(document.getElementById(`rf-${id}`).value)  || 0.01;
         const hz  = parseFloat(document.getElementById(`hz-${id}`).value)  || 1;
         const LF_R1  = parseFloat(document.getElementById(`lf-r1-${id}`).value)  || 0.01;
-        const LO_R1  = parseFloat(document.getElementById(`lo-r1-${id}`).value)  || 0;
+        const LO_R1  = incluiSistemas ? (parseFloat(document.getElementById(`lo-r1-${id}`).value) || 0) : 0;
         const LF_R4  = parseFloat(document.getElementById(`lf-r4-${id}`).value)  || 0.1;
         const LO_R4v = parseFloat(document.getElementById(`lo-r4-${id}`).value)  || 0.01;
         const mesmoRoteamento = document.getElementById(`roteamento-${id}`) ? document.getElementById(`roteamento-${id}`).checked : false;
