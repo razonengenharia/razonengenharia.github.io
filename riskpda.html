@@ -85,6 +85,15 @@
                             <p class="text-xs text-slate-500">Soma dos nz por zona: <span id="nz-soma-display" class="font-bold text-slate-700">—</span> <span id="nz-soma-alerta" class="hidden text-red-500 font-semibold">≠ nt — revise a distribuição por zona</span></p>
                         </div>
                     </div>
+                    <div class="lg:col-span-4 border-t border-slate-100 pt-5">
+                        <label class="text-sm font-semibold text-slate-700 mb-1 block">Tipo de estrutura
+                            <span class="text-[10px] font-normal text-slate-400 ml-1">— determina os componentes de R1 (NBR 5419-2:2026, item 4.3.1)</span>
+                        </label>
+                        <select id="tipo-estrutura" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" onchange="calcularRiscos()">
+                            <option value="comum">Comum — residência, escritório, comércio, galpão (R1 = RA + RB + RU + RV)</option>
+                            <option value="critica">Crítica / Explosiva — hospital, UTI, munições, controle de tráfego aéreo (R1 = todos os 8 componentes)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -328,8 +337,7 @@
 
                 <!-- Nota interpretativa -->
                 <div class="mt-5 p-4 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-500 leading-relaxed">
-                    <p><b class="text-slate-700">R1:</b> Calculado com RA, RB (choque e incêndio por S1), RC, RM (sistemas por S1/S2), RU, RV (choque e incêndio por S3) e RW, RZ (sistemas por S3/S4).</p>
-                    <p class="mt-1"><b class="text-slate-700">Nota:</b> Os componentes RC, RM, RW e RZ só são relevantes para R1 quando a falha de sistemas coloca vidas em risco (hospitais, risco de explosão). Para estruturas comuns, R1 é dominado por RA, RB, RU e RV.</p>
+                    <p><b class="text-slate-700">R1:</b> <span id="nota-r1-texto">Calculado com <b>RA + RB + RU + RV</b> — estrutura comum (RC, RM, RW, RZ excluídos conforme NBR 5419-2:2026, item 4.3.1).</span></p>
                     <p class="mt-1"><b class="text-slate-700">R4:</b> Calculado sem os fatores de pessoas (nz/nt, tz/8760) e sem rs/hz, conforme Tabela D.1 simplificada com ca/ct = 1 (NBR 5419-2:2026, nota da Tabela D.1).</p>
                     <p class="mt-1"><b class="text-slate-700">Roteamento:</b> Quando as linhas de energia e sinal têm o mesmo trajeto, marque "Mesmo roteamento" em cada zona — o cálculo usará apenas a linha mais crítica (NBR 5419-2, item 6.4.5).</p>
                 </div>

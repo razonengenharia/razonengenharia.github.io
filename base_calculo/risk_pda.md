@@ -479,10 +479,20 @@ Textos:
 - KS1 e KS2 são limitados a **1** (máximo), conforme NBR 5419-2:2026 item B.4.13.
 - KS1 = 0 quando Wm1 = 0 → na prática é tratado como **1** (sem blindagem = sem redução).
 
-### RC, RM, RW, RZ em R1
-- Estes componentes de sistemas internos **só entram em R1 se a falha do sistema coloca vidas em risco direto** (hospitais, UTI, áreas com risco de explosão).
-- Para estruturas comuns, R1 é praticamente composto por RA + RB + RU + RV.
-- O software inclui todos os componentes por padrão (abordagem conservadora).
+### Tipo de estrutura — filtro de R1 (item 4.3.1 e Tabela 2)
+
+O campo global **"Tipo de estrutura"** (Seção 1 da UI) controla quais componentes entram no cálculo de R1, conforme NBR 5419-2:2026, item 4.3.1 e Tabela 2:
+
+| Tipo | R1 calculado | Exemplos |
+|------|-------------|----------|
+| **Comum** (padrão) | `RA + RB + RU + RV` | Residência, escritório, comércio, galpão |
+| **Crítica / Explosiva** | `RA + RB + RC + RM + RU + RV + RW + RZ` | Hospital, UTI, depósito de munições, controle de tráfego aéreo |
+
+**Por que isso importa:** somar RC, RM, RW e RZ para uma residência comum pode gerar falso positivo de "Necessita Proteção", exigindo medidas de proteção interna (MPS) que a norma não obrigaria para aquele uso.
+
+**O que não muda:** F e R4 sempre incluem todos os componentes — são métricas de dano a equipamentos e patrimônio, onde a classificação da estrutura não altera a obrigação de proteção.
+
+**Implementado por:** `tipoEstrutura` e `incluiSistemas` lidos uma vez antes do forEach de zonas em `calcularRiscos()`. A nota do rodapé do painel de resultados (`#nota-r1-texto`) atualiza dinamicamente para refletir a fórmula ativa.
 
 ### R3 — Patrimônio Cultural
 - Previsto na norma (RT = 10⁻⁴) mas **não implementado** nesta versão do RiskPDA. Em stand-by até decisão de escopo.

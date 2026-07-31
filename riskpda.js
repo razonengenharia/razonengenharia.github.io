@@ -638,6 +638,8 @@ function calcularRiscos() {
     // 2. CÁLCULOS DO ANEXO B (POR ZONA) — CORRIGIDO E COMPLETO
     //    Fórmulas conforme "Anexo B cálculos.txt" (Eq. B.1 a B.11)
     // ---------------------------------------------------------
+    const tipoEstrutura = document.getElementById('tipo-estrutura')?.value || 'comum';
+    const incluiSistemas = tipoEstrutura === 'critica';
     AnaliseRisco.zonas.forEach(zona => {
         const id = zona.id;
         if (!document.getElementById(`pta-${id}`)) return;
@@ -750,7 +752,7 @@ function calcularRiscos() {
         const RV = combinar((Nl_en + Ndj_en) * resEn.PV * LV,  (Nl_si + Ndj_si) * resSi.PV * LV);
         const RW = combinar((Nl_en + Ndj_en) * resEn.PW * LC,  (Nl_si + Ndj_si) * resSi.PW * LC);  // LW = LC
         const RZ = combinar(Ni_en * resEn.PZ * LC,              Ni_si * resSi.PZ * LC);              // LZ = LC
-        const R1_zona = RA + RB + RC + RM + RU + RV + RW + RZ;
+        const R1_zona = RA + RB + RU + RV + (incluiSistemas ? RC + RM + RW + RZ : 0);
 
         // F — frequência de dano a sistemas internos (Tabela 7, NBR 5419-2)
         const FB = Nd * PB;
@@ -781,6 +783,14 @@ function calcularRiscos() {
 
         zona.anexoC_resultado = { R1: R1_zona, F: F_zona, R4: R4_zona };
     });
+
+    // Atualiza nota de R1 no rodapé
+    const notaR1El = document.getElementById('nota-r1-texto');
+    if (notaR1El) {
+        notaR1El.innerHTML = incluiSistemas
+            ? 'Calculado com <b>todos os 8 componentes</b>: RA + RB + RC + RM + RU + RV + RW + RZ — estrutura crítica/explosiva (NBR 5419-2:2026, item 4.3.1).'
+            : 'Calculado com <b>RA + RB + RU + RV</b> — estrutura comum (RC, RM, RW, RZ excluídos conforme NBR 5419-2:2026, item 4.3.1).';
+    }
 
     // ---------------------------------------------------------
     // 4. TOTAIS GLOBAIS — R1, F, R4 (soma de todas as zonas)
