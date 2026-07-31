@@ -91,7 +91,7 @@ Nl  = Ng × Al × Ci × Ct × Ce × 10⁻⁶  # Impactos diretos na linha (S3)
 Ni  = Ng × Ai × Ci × Ct × Ce × 10⁻⁶  # Impactos induzidos próximos à linha (S4)
 ```
 
-Calculados separadamente para **linha de energia** (`en`, Uw fixo = 2,5 kV) e **linha de sinal** (`si`, Uw fixo = 1,5 kV).
+Calculados separadamente para **linha de energia** (`en`) e **linha de sinal** (`si`). O Uw de cada linha é selecionável por zona via dropdown (padrão: 2,5 kV para energia — Categoria III da NBR 5410 Tab. 31; 1,5 kV para sinal — Categoria II).
 
 ### Tabelas de suporte (Anexo A)
 
@@ -467,13 +467,14 @@ Textos:
 - `nt` (total de pessoas na edificação) é **global**, na seção de dados gerais ao lado de L/W/H/Ng.
 - Cada zona mantém `nz` (pessoas naquela zona).
 - `calcularRiscos()` lê `nt` de `#nt-global`. O fator de pessoas por zona é `(nz/nt) × (tz/8760)`.
-- Validação em tempo real: a soma dos `nz` é exibida ao lado de `nt`; se divergir, alerta visual `≠ nt — revise a distribuição por zona`.
+- Validação em tempo real: a soma dos `nz` é exibida abaixo do input de `nt`; se divergir, alerta visual `≠ nt — revise a distribuição por zona`.
 
 ### Uw e as linhas de energia vs. sinal
-- **Energia (BT)**: Uw = 2,5 kV (categoria III, Tab. 31 da NBR 5410).
-- **Sinal**: Uw = 1,5 kV (categoria II).
+- **Energia (BT)**: Uw padrão = 2,5 kV (Categoria de Sobretensão III, Tab. 31 da NBR 5410) — editável por dropdown em cada zona.
+- **Sinal**: Uw padrão = 1,5 kV (Categoria II) — editável por dropdown em cada zona.
 - PLD (Tabela B.8) é lido para o Uw específico de cada linha a partir da resistência de blindagem RS do cabo.
 - PLI (Tabela B.9) é lido para o Uw de cada linha com tabelas separadas por tipo (energia / sinal).
+- Os valores padrão correspondem às categorias normativas mais comuns; o engenheiro pode alterá-los caso a instalação justifique outra categoria.
 
 ### Wm1 e Wm2 — bloqueio com desbloqueio manual
 - Iniciam em **0** (bloqueados, readonly visual). A maioria das edificações não possui blindagem espacial nem malha de SPDA, portanto 0 é o padrão correto.
@@ -510,6 +511,7 @@ O campo global **"Tipo de estrutura"** (Seção 1 da UI) controla duas coisas em
 
 **Implementado por:**
 - `atualizarVisibilidadeLO_R1()` — oculta/exibe `#lo-r1-bloco-{id}` por zona; chamada no `onchange` do select `tipo-estrutura` e ao adicionar zona.
+- `atualizarCorTipoEstrutura()` — aplica cor de fundo ao select `tipo-estrutura`: azul claro para Comum (`#EFF6FF`), vermelho claro para Crítica/Explosiva (`#FEF2F2`); chamada no mesmo `onchange` e com cor inicial definida por `style` inline no HTML.
 - Em `calcularRiscos()`: `LO_R1 = incluiSistemas ? valor_do_select : 0` (defesa em profundidade, independente do estado do DOM).
 - `tipoEstrutura` e `incluiSistemas` lidos antes do forEach de zonas.
 - A nota do rodapé (`#nota-r1-texto`) atualiza dinamicamente para refletir a fórmula ativa.
