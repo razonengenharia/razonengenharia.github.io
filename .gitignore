@@ -21,3 +21,9 @@ yarn-error.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# RiskPDA — desenvolvimento local, não publicar
+riskpda.html
+riskpda.js
+data/
+base_calculo/risk_pda.md
