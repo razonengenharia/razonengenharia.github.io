@@ -91,7 +91,7 @@ Nl  = Ng × Al × Ci × Ct × Ce × 10⁻⁶  # Impactos diretos na linha (S3)
 Ni  = Ng × Ai × Ci × Ct × Ce × 10⁻⁶  # Impactos induzidos próximos à linha (S4)
 ```
 
-Calculados separadamente para **linha de energia** (`en`) e **linha de sinal** (`si`). O Uw de cada linha é selecionável por zona via dropdown (padrão: 2,5 kV para energia — Categoria III da NBR 5410 Tab. 31; 1,5 kV para sinal — Categoria II).
+Calculados separadamente para **linha de energia** (`en`, Uw = 2,5 kV) e **linha de sinal** (`si`, Uw = 1,5 kV). Valores fixos conforme Categorias de Sobretensão III e II da Tabela 31 da NBR 5410 — não há input de Uw para o usuário.
 
 ### Tabelas de suporte (Anexo A)
 
@@ -470,11 +470,10 @@ Textos:
 - Validação em tempo real: a soma dos `nz` é exibida abaixo do input de `nt`; se divergir, alerta visual `≠ nt — revise a distribuição por zona`.
 
 ### Uw e as linhas de energia vs. sinal
-- **Energia (BT)**: Uw padrão = 2,5 kV (Categoria de Sobretensão III, Tab. 31 da NBR 5410) — editável por dropdown em cada zona.
-- **Sinal**: Uw padrão = 1,5 kV (Categoria II) — editável por dropdown em cada zona.
-- PLD (Tabela B.8) é lido para o Uw específico de cada linha a partir da resistência de blindagem RS do cabo.
-- PLI (Tabela B.9) é lido para o Uw de cada linha com tabelas separadas por tipo (energia / sinal).
-- Os valores padrão correspondem às categorias normativas mais comuns; o engenheiro pode alterá-los caso a instalação justifique outra categoria.
+- **Energia (BT)**: Uw = 2,5 kV — Categoria de Sobretensão III, Tabela 31 da NBR 5410 (instalações de distribuição).
+- **Sinal**: Uw = 1,5 kV — Categoria II, Tabela 31 da NBR 5410 (equipamentos de utilização).
+- Valores **fixos por decisão normativa** — não há campo de entrada para Uw. Os dropdowns de PLD (Tab. B.8) e PLI (Tab. B.9) são construídos para o Uw correspondente de cada linha.
+- Wm1 e Wm2 seguem padrão análogo: iniciam bloqueados em 0 mas são desbloqueáveis manualmente (ver seção Wm1 e Wm2).
 
 ### Wm1 e Wm2 — bloqueio com desbloqueio manual
 - Iniciam em **0** (bloqueados, readonly visual). A maioria das edificações não possui blindagem espacial nem malha de SPDA, portanto 0 é o padrão correto.
