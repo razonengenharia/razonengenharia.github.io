@@ -33,7 +33,7 @@ O app vive em `https://riskpda.razonengenharia.com.br` — separado do site inst
 | App — dashboard | `https://riskpda.razonengenharia.com.br/dashboard.html` |
 | Termos de Uso (site) | `https://razonengenharia.com.br/termos` |
 | Política de Privacidade (site) | `https://razonengenharia.com.br/privacidade` |
-| Suporte / cancelamento | `contato@razonengenharia.com.br` |
+| Suporte / cancelamento | `suporte@razonengenharia.com.br` |
 
 ---
 

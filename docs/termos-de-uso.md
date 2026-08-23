@@ -15,7 +15,7 @@ Se você não concordar com algum destes termos, não crie sua conta nem utilize
 
 ## 2. O Serviço
 
-O **RiskPDA** é uma ferramenta digital de **cálculo de risco de descargas atmosféricas**, desenvolvida para auxiliar engenheiros e projetistas na elaboração de laudos técnicos baseados nas normas NFPA 780 e NBR 5419.
+O **RiskPDA** é uma ferramenta digital de **cálculo de risco de descargas atmosféricas**, desenvolvida para auxiliar engenheiros e projetistas na elaboração de laudos técnicos baseados na norma **NBR 5419-2:2026**.
 
 O serviço é disponibilizado como **SaaS (Software como Serviço)** pela **Razon Engenharia**, mediante assinatura mensal ou anual, conforme o plano escolhido no momento da contratação.
 
@@ -61,7 +61,7 @@ Você é o único responsável por:
 
 - Manter sua senha em sigilo e não compartilhá-la
 - Todas as ações realizadas na sua conta, independentemente de quem as executou
-- Notificar imediatamente a Razon Engenharia (contato@razonengenharia.com.br) em caso de suspeita de acesso não autorizado
+- Notificar imediatamente a Razon Engenharia (suporte@razonengenharia.com.br) em caso de suspeita de acesso não autorizado
 
 ---
 
@@ -124,5 +124,5 @@ Fica eleito o foro do domicílio do usuário para resolução de conflitos decor
 ## 12. Contato
 
 **Razon Engenharia**
-contato@razonengenharia.com.br
+suporte@razonengenharia.com.br
 razonengenharia.com.br
