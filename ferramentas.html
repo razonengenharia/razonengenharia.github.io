@@ -86,9 +86,133 @@
                     </span>
                 </a>
 
-                <!-- Espaço reservado para futuras ferramentas se adaptarem ao grid automaticamente -->
+                <!-- Card RiskPDA — SaaS com planos e toggle Mensal/Anual -->
+                <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 flex flex-col md:col-span-2 lg:col-span-2">
+
+                    <div class="text-center mb-6">
+                        <div class="text-razon-copper text-xs uppercase tracking-widest font-bold mb-2">SaaS · NBR 5419-2:2026</div>
+                        <h3 class="text-2xl font-bold text-razon-dark mb-3">RiskPDA</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed max-w-md mx-auto">
+                            Cálculo de risco de descargas atmosféricas para engenheiros elétricos e civis.
+                            Gere laudos técnicos completos em conformidade com a norma vigente.
+                        </p>
+                    </div>
+
+                    <!-- Toggle Mensal / Anual -->
+                    <div class="flex items-center justify-center gap-3 mb-8">
+                        <span id="label-mensal" class="text-sm font-semibold text-razon-dark">Mensal</span>
+                        <button id="toggle-billing"
+                            onclick="toggleBilling()"
+                            class="relative w-12 h-6 bg-slate-200 rounded-full transition-colors duration-300 focus:outline-none"
+                            aria-label="Alternar ciclo de cobrança">
+                            <span id="toggle-knob" class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-300"></span>
+                        </button>
+                        <span id="label-anual" class="text-sm font-medium text-slate-400">
+                            Anual
+                            <span class="ml-1 bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">-30%</span>
+                        </span>
+                    </div>
+
+                    <!-- Planos lado a lado -->
+                    <div class="grid sm:grid-cols-2 gap-4 flex-grow">
+
+                        <!-- Básico -->
+                        <div class="border border-slate-200 rounded-2xl p-6 flex flex-col">
+                            <p class="text-xs uppercase tracking-widest font-bold text-slate-400 mb-1">Básico</p>
+                            <div class="mb-1">
+                                <span id="price-basico" class="text-3xl font-bold text-razon-dark">R$ 19,90</span>
+                                <span class="text-slate-400 text-sm">/mês</span>
+                            </div>
+                            <p id="billing-basico" class="text-xs text-slate-400 mb-4 h-4"></p>
+                            <ul class="space-y-2 text-sm text-slate-600 flex-grow mb-6">
+                                <li class="flex items-center gap-2"><span class="text-green-500">✓</span> 5 laudos por mês</li>
+                                <li class="flex items-center gap-2"><span class="text-green-500">✓</span> NBR 5419-2:2026</li>
+                                <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Download DOCX</li>
+                            </ul>
+                            <a id="btn-basico"
+                               href="https://pay.kiwify.com.br/lzK6PPz"
+                               target="_blank" rel="noopener noreferrer"
+                               class="block text-center bg-razon-dark hover:bg-razon-copper text-white px-6 py-2.5 rounded-full font-semibold transition duration-300 text-sm">
+                                Assinar Básico
+                            </a>
+                        </div>
+
+                        <!-- PRO -->
+                        <div class="border-2 border-razon-copper rounded-2xl p-6 flex flex-col relative overflow-hidden">
+                            <div class="absolute top-3 right-3 bg-razon-copper text-white text-xs font-bold px-2 py-0.5 rounded-full">Popular</div>
+                            <p class="text-xs uppercase tracking-widest font-bold text-razon-copper mb-1">PRO</p>
+                            <div class="mb-1">
+                                <span id="price-pro" class="text-3xl font-bold text-razon-dark">R$ 59,90</span>
+                                <span class="text-slate-400 text-sm">/mês</span>
+                            </div>
+                            <p id="billing-pro" class="text-xs text-slate-400 mb-4 h-4"></p>
+                            <ul class="space-y-2 text-sm text-slate-600 flex-grow mb-6">
+                                <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Laudos ilimitados</li>
+                                <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Tudo do Básico</li>
+                                <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Suporte prioritário</li>
+                            </ul>
+                            <a id="btn-pro"
+                               href="https://pay.kiwify.com.br/LhXvQ3A"
+                               target="_blank" rel="noopener noreferrer"
+                               class="block text-center bg-razon-copper hover:bg-razon-dark text-white px-6 py-2.5 rounded-full font-semibold transition duration-300 text-sm">
+                                Assinar PRO
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Botão secundário -->
+                    <div class="text-center mt-6">
+                        <a href="https://riskpda.razonengenharia.com.br/riskpda.html"
+                           target="_blank" rel="noopener noreferrer"
+                           class="text-sm text-slate-400 hover:text-razon-copper transition underline underline-offset-2">
+                            Já tenho conta — acessar o app →
+                        </a>
+                    </div>
+                </div>
 
             </div>
+
+            <script>
+                var isAnual = false;
+                var plans = {
+                    basico: {
+                        mensal: { price: 'R$ 19,90', billing: '', link: 'https://pay.kiwify.com.br/lzK6PPz' },
+                        anual:  { price: 'R$ 13,93', billing: 'cobrado R$ 167,16/ano', link: 'https://pay.kiwify.com.br/Bui5OnG' }
+                    },
+                    pro: {
+                        mensal: { price: 'R$ 59,90', billing: '', link: 'https://pay.kiwify.com.br/LhXvQ3A' },
+                        anual:  { price: 'R$ 41,66', billing: 'cobrado R$ 499,90/ano', link: 'https://pay.kiwify.com.br/45ShTcA' }
+                    }
+                };
+
+                function toggleBilling() {
+                    isAnual = !isAnual;
+                    var knob = document.getElementById('toggle-knob');
+                    var btn  = document.getElementById('toggle-billing');
+                    var lbM  = document.getElementById('label-mensal');
+                    var lbA  = document.getElementById('label-anual');
+
+                    if (isAnual) {
+                        knob.style.transform = 'translateX(24px)';
+                        btn.style.backgroundColor = '#B87333';
+                        lbM.className = 'text-sm font-medium text-slate-400';
+                        lbA.className = 'text-sm font-semibold text-razon-dark';
+                    } else {
+                        knob.style.transform = 'translateX(0)';
+                        btn.style.backgroundColor = '';
+                        lbM.className = 'text-sm font-semibold text-razon-dark';
+                        lbA.className = 'text-sm font-medium text-slate-400';
+                    }
+
+                    var ciclo = isAnual ? 'anual' : 'mensal';
+                    document.getElementById('price-basico').textContent  = plans.basico[ciclo].price;
+                    document.getElementById('billing-basico').textContent = plans.basico[ciclo].billing;
+                    document.getElementById('btn-basico').href            = plans.basico[ciclo].link;
+                    document.getElementById('price-pro').textContent      = plans.pro[ciclo].price;
+                    document.getElementById('billing-pro').textContent    = plans.pro[ciclo].billing;
+                    document.getElementById('btn-pro').href               = plans.pro[ciclo].link;
+                }
+            </script>
         </div>
     </main>
 
@@ -99,6 +223,10 @@
             <p class="font-bold text-razon-dark text-lg mb-2">Razon Engenharia</p>
             <p class="text-slate-500 text-sm">Araçatuba, SP | 2026</p>
             <p class="text-xs text-slate-400 mt-2">razonengenharia.com.br</p>
+            <div class="mt-4 flex justify-center gap-6">
+                <a href="termos.html" class="text-xs text-slate-400 hover:text-razon-copper transition">Termos de Uso</a>
+                <a href="privacidade.html" class="text-xs text-slate-400 hover:text-razon-copper transition">Política de Privacidade</a>
+            </div>
         </div>
     </footer>
 
