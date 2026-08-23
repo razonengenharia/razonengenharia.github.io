@@ -49,39 +49,37 @@
     </header>
 
     <!-- Conteúdo Principal da Página de Ferramentas -->
-    <main class="flex-grow pt-36 pb-24">
+    <main class="flex-grow pt-36 pb-24" style="background: linear-gradient(160deg, #1A2E46 0%, #162538 100%)">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16 max-w-2xl mx-auto">
-                <h1 class="text-4xl md:text-5xl font-bold text-razon-dark tracking-tight">Ferramentas de Engenharia</h1>
-                <p class="text-lg text-slate-600 mt-5">Aplicações e softwares exclusivos desenvolvidos para otimizar cálculos e dimensionamentos técnicos.</p>
+                <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Ferramentas de Engenharia</h1>
+                <p class="text-lg text-slate-400 mt-5">Aplicações e softwares exclusivos desenvolvidos para otimizar cálculos e dimensionamentos técnicos.</p>
                 <div class="w-24 h-2 bg-razon-copper mx-auto mt-6 rounded-full"></div>
             </div>
 
             <!-- Grid pronto para receber mais ferramentas no futuro -->
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto justify-center">
-                
-                <!-- Card RiskPDA — SaaS com planos e toggle Mensal/Anual -->
-                <div class="rounded-3xl shadow-xl overflow-hidden md:col-span-2 lg:col-span-3 max-w-2xl mx-auto w-full select-none cursor-default" style="border:1px solid rgba(255,255,255,0.06)">
 
-                    <!-- Header escuro com logo -->
-                    <div class="bg-razon-dark px-8 pt-10 pb-8 text-center" style="background: linear-gradient(135deg, #1A2E46 0%, #1e3554 100%)">
-                        <div class="flex items-center justify-center gap-2 mb-3">
+                <!-- Card RiskPDA — SaaS com planos e toggle Mensal/Anual -->
+                <div class="bg-white rounded-3xl shadow-2xl overflow-hidden md:col-span-2 lg:col-span-3 max-w-2xl mx-auto w-full select-none cursor-default">
+
+                    <!-- Logo no topo claro -->
+                    <div class="px-8 pt-9 pb-6 text-center border-b border-slate-100">
+                        <div class="flex items-center justify-center gap-2 mb-2">
                             <span class="text-razon-copper text-2xl leading-none">⚡</span>
                             <span class="text-2xl font-bold tracking-tight">
-                                <span class="text-razon-copper">Risk</span><span class="text-white">PDA</span>
+                                <span class="text-razon-copper">Risk</span><span class="text-razon-dark">PDA</span>
                             </span>
                         </div>
-                        <p class="text-slate-400 text-sm leading-relaxed">
-                            Cálculo de risco de descargas atmosféricas · NBR 5419-2:2026
-                        </p>
+                        <p class="text-slate-400 text-sm">Cálculo de risco de descargas atmosféricas · NBR 5419-2:2026</p>
                     </div>
 
                     <!-- Body -->
-                    <div class="bg-white px-8 pt-7 pb-8">
+                    <div class="bg-slate-50 px-8 pt-7 pb-8">
 
                         <!-- Toggle pill -->
                         <div class="flex justify-center mb-7">
-                            <div class="inline-flex bg-slate-100 rounded-full p-1 gap-1">
+                            <div class="inline-flex bg-white border border-slate-200 rounded-full p-1 gap-1 shadow-sm">
                                 <button id="pill-mensal" onclick="toggleBilling(false)"
                                     class="px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 bg-razon-dark text-white shadow-sm">
                                     Mensal
@@ -97,7 +95,7 @@
                         <div class="grid sm:grid-cols-2 gap-4">
 
                             <!-- Básico -->
-                            <div class="border border-slate-200 rounded-2xl p-6 flex flex-col hover:border-slate-300 transition-colors duration-200">
+                            <div class="plan-card bg-white border border-slate-200 rounded-2xl p-6 flex flex-col transition-all duration-300">
                                 <p class="text-xs uppercase tracking-widest font-bold text-slate-400 mb-3">Básico</p>
                                 <div class="flex items-end gap-1 mb-1">
                                     <span id="price-basico" class="text-4xl font-bold text-razon-dark leading-none">R$ 19,90</span>
@@ -127,25 +125,25 @@
                             </div>
 
                             <!-- PRO -->
-                            <div class="rounded-2xl p-6 flex flex-col relative overflow-hidden" style="background: linear-gradient(145deg, #1A2E46 0%, #243d5c 100%)">
+                            <div class="plan-card-pro bg-white border-2 border-razon-copper rounded-2xl p-6 flex flex-col relative overflow-hidden transition-all duration-300">
                                 <div class="absolute top-3 right-3 bg-razon-copper text-white text-xs font-bold px-2.5 py-1 rounded-full tracking-wide">Popular</div>
                                 <p class="text-xs uppercase tracking-widest font-bold text-razon-copper mb-3">PRO</p>
                                 <div class="flex items-end gap-1 mb-1">
-                                    <span id="price-pro" class="text-4xl font-bold text-white leading-none">R$ 59,90</span>
+                                    <span id="price-pro" class="text-4xl font-bold text-razon-dark leading-none">R$ 59,90</span>
                                     <span class="text-slate-400 text-sm mb-0.5">/mês</span>
                                 </div>
-                                <p id="billing-pro" class="text-xs text-slate-500 mb-5 h-4"></p>
-                                <ul class="space-y-2.5 text-sm text-slate-300 flex-grow mb-6">
+                                <p id="billing-pro" class="text-xs text-slate-400 mb-5 h-4"></p>
+                                <ul class="space-y-2.5 text-sm text-slate-600 flex-grow mb-6">
                                     <li class="flex items-center gap-2.5">
-                                        <span class="w-4 h-4 rounded-full flex items-center justify-center text-xs leading-none flex-shrink-0" style="background:rgba(184,115,51,0.25);color:#B87333">✓</span>
+                                        <span class="w-4 h-4 rounded-full flex items-center justify-center text-xs leading-none flex-shrink-0" style="background:rgba(184,115,51,0.15);color:#B87333">✓</span>
                                         Laudos ilimitados
                                     </li>
                                     <li class="flex items-center gap-2.5">
-                                        <span class="w-4 h-4 rounded-full flex items-center justify-center text-xs leading-none flex-shrink-0" style="background:rgba(184,115,51,0.25);color:#B87333">✓</span>
+                                        <span class="w-4 h-4 rounded-full flex items-center justify-center text-xs leading-none flex-shrink-0" style="background:rgba(184,115,51,0.15);color:#B87333">✓</span>
                                         Tudo do Básico
                                     </li>
                                     <li class="flex items-center gap-2.5">
-                                        <span class="w-4 h-4 rounded-full flex items-center justify-center text-xs leading-none flex-shrink-0" style="background:rgba(184,115,51,0.25);color:#B87333">✓</span>
+                                        <span class="w-4 h-4 rounded-full flex items-center justify-center text-xs leading-none flex-shrink-0" style="background:rgba(184,115,51,0.15);color:#B87333">✓</span>
                                         Suporte prioritário
                                     </li>
                                 </ul>
@@ -170,6 +168,18 @@
                 </div>
 
             </div>
+
+            <style>
+                .plan-card:hover {
+                    box-shadow: 0 0 28px rgba(184,115,51,0.18), 0 4px 16px rgba(0,0,0,0.06);
+                    border-color: rgba(184,115,51,0.4);
+                    transform: translateY(-2px);
+                }
+                .plan-card-pro:hover {
+                    box-shadow: 0 0 32px rgba(184,115,51,0.35), 0 4px 20px rgba(0,0,0,0.1);
+                    transform: translateY(-2px);
+                }
+            </style>
 
             <script>
                 var isAnual = false;
