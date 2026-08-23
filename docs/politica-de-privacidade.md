@@ -20,7 +20,7 @@ Site: razonengenharia.com.br
 |---|---|
 | Nome e e-mail | Identificação da conta e comunicações relacionadas ao serviço |
 | Senha (armazenada como hash — nunca em texto puro) | Autenticação segura |
-| Parâmetros de cálculo e laudos gerados | Prestação do serviço contratado |
+| Metadados dos laudos gerados (número, tipo, data) | Registro de uso e histórico de atividade |
 | Data e hora de acesso | Segurança e prevenção de fraude |
 | Plano e status da assinatura | Controle de acesso e cobrança |
 
@@ -35,8 +35,8 @@ Tratamos seus dados com fundamento no **Art. 7º, V da Lei 13.709/2019 (LGPD)**:
 Seus dados são usados exclusivamente para:
 - Criar e manter sua conta de acesso
 - Processar sua assinatura
-- Gerar e armazenar seus laudos de risco
-- Enviar notificações relacionadas ao serviço (criação de conta, renovação, suporte técnico)
+- Gerar seus laudos de risco e registrar os metadados (número, tipo, data) — o arquivo DOCX é entregue diretamente para download e **não é armazenado em nossos servidores**
+- Enviar notificações relacionadas ao serviço (criação de conta, pagamento atrasado, cancelamento, suporte técnico)
 
 **Não utilizamos seus dados para marketing sem sua autorização explícita e separada.**
 
@@ -75,7 +75,7 @@ A transferência de dados para os EUA ocorre conforme as condições permitidas 
 
 O RiskPDA utiliza um cookie de sessão estritamente necessário ao funcionamento do serviço (`riskpda_token`). Este cookie:
 - Não é usado para rastreamento ou publicidade
-- Expira automaticamente ao fim da sessão ou em 24 horas
+- Expira automaticamente ao fim da sessão ou em 8 horas
 - Não pode ser desativado sem comprometer o acesso ao sistema
 
 ---
@@ -87,7 +87,7 @@ Como titular de dados, você tem direito de, a qualquer momento:
 - **Acessar** os dados que mantemos sobre você
 - **Corrigir** dados incompletos ou incorretos
 - **Solicitar a eliminação** dos seus dados (sujeito a obrigações legais de retenção)
-- **Portabilidade**: receber seus laudos e dados em formato estruturado
+- **Portabilidade**: receber seus dados cadastrais (nome, e-mail, plano, metadados de laudos) em formato estruturado — os arquivos DOCX não são armazenados e portanto não podem ser exportados
 - **Revogar** qualquer consentimento que tenha fornecido
 - **Peticionar à ANPD** caso entenda que seus direitos não foram atendidos
 
