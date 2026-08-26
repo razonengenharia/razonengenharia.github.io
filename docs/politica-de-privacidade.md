@@ -20,7 +20,8 @@ Site: razonengenharia.com.br
 |---|---|
 | Nome e e-mail | Identificação da conta e comunicações relacionadas ao serviço |
 | Senha (armazenada como hash — nunca em texto puro) | Autenticação segura |
-| Metadados dos laudos gerados (número, tipo, data) | Registro de uso e histórico de atividade |
+| Parâmetros técnicos de cada laudo (zonas, linhas, medidas de proteção, resultados) | Registro do cálculo e histórico de atividade |
+| Nome ou razão social do cliente vinculado ao laudo | Identificação do laudo no histórico do profissional |
 | Data e hora de acesso | Segurança e prevenção de fraude |
 | Plano e status da assinatura | Controle de acesso e cobrança |
 
@@ -35,7 +36,7 @@ Tratamos seus dados com fundamento no **Art. 7º, V da Lei 13.709/2019 (LGPD)**:
 Seus dados são usados exclusivamente para:
 - Criar e manter sua conta de acesso
 - Processar sua assinatura
-- Gerar seus laudos de risco e registrar os metadados (número, tipo, data) — o arquivo DOCX é entregue diretamente para download e **não é armazenado em nossos servidores**
+- Gerar seus laudos de risco e armazenar os parâmetros técnicos do cálculo (zonas, linhas, medidas de proteção e resultados) e o nome ou razão social do cliente vinculado — o arquivo DOCX é entregue diretamente para download e **não é armazenado em nossos servidores**
 - Enviar notificações relacionadas ao serviço (criação de conta, pagamento atrasado, cancelamento, suporte técnico)
 
 **Não utilizamos seus dados para marketing sem sua autorização explícita e separada.**
@@ -87,7 +88,7 @@ Como titular de dados, você tem direito de, a qualquer momento:
 - **Acessar** os dados que mantemos sobre você
 - **Corrigir** dados incompletos ou incorretos
 - **Solicitar a eliminação** dos seus dados (sujeito a obrigações legais de retenção)
-- **Portabilidade**: receber seus dados cadastrais (nome, e-mail, plano, metadados de laudos) em formato estruturado — os arquivos DOCX não são armazenados e portanto não podem ser exportados
+- **Portabilidade**: receber seus dados cadastrais (nome, e-mail, plano, dados técnicos dos laudos) em formato estruturado — os arquivos DOCX não são armazenados e portanto não podem ser exportados
 - **Revogar** qualquer consentimento que tenha fornecido
 - **Peticionar à ANPD** caso entenda que seus direitos não foram atendidos
 
