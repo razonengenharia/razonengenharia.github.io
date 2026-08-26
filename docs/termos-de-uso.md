@@ -51,6 +51,8 @@ Você concorda em utilizar o RiskPDA apenas para finalidades técnicas lícitas 
 - Usar automação (bots, scripts) para geração em massa de laudos além dos limites do plano
 - Qualquer uso que viole a legislação brasileira vigente
 
+**Reimpressão de laudos:** A reimpressão de laudos já gerados está limitada a **5 reimpressões por laudo** e **10 por dia** por usuário. Esses limites aplicam-se a todos os planos e existem para garantir a integridade e disponibilidade do serviço.
+
 O descumprimento pode resultar em suspensão imediata da conta, sem direito a reembolso.
 
 ---
